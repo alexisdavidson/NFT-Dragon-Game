@@ -2,41 +2,26 @@ import { useState, useEffect } from 'react'
 import { ethers } from "ethers"
 import { Row, Col, Card, Button } from 'react-bootstrap'
 
-const Home = ({ marketplace, nft }) => {
+const Home = ({ account }) => {
     const [loading, setLoading] = useState(true)
     const [items, setItems] = useState([])
     const loadMarketplaceItems = async () => {
-        // Load all unsold items
-        const itemCount = await marketplace.itemCount()
-        let items = []
-        for (let i = 1; i <= itemCount; i++) {
-            const item = await marketplace.items(i)
-            if (!item.sold) {
-                // get uri url from nft contract
-                const uri = await nft.tokenURI(item.tokenId)
-                // use uri to fetch the nft metadata stored on ipfs 
-                const response = await fetch(uri)
-                const metadata = await response.json()
-                // get total price of item (item price + fee)
-                const totalPrice = await marketplace.getTotalPrice(item.itemId)
-                // Add item to items array
-                items.push({
-                    totalPrice,
-                    itemId: item.itemId,
-                    seller: item.seller,
-                    name: metadata.name,
-                    description: metadata.description,
-                    image: metadata.image
-                })
-            }
-        }
+        
+        // metadata at token_metadata (next api request https://scoundrelsmint.io/metadata/985.json )
+
+        let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=0x91a96a8ed695b7c59c01f845f7bb522fe906d88d&format=json`)
+        .then((res) => res.json())
+        .then((res) => {
+          return res.assets
+        })
+        .catch((e) => {
+          console.error(e)
+          console.error('Could not talk to OpenSea')
+          return null
+        })
+
         setLoading(false)
         setItems(items)
-    }
-
-    const buyMarketItem = async (item) => {
-        await (await marketplace.purchaseItem(item.itemId, { value: item.totalPrice })).wait()
-        loadMarketplaceItems()
     }
 
     useEffect(() => {
@@ -57,7 +42,7 @@ const Home = ({ marketplace, nft }) => {
                         {items.map((item, idx) => (
                             <Col key={idx} className="overflow-hidden">
                                 <Card>
-                                    <Card.Img variant="top" src={item.image} />
+                                    <Card.Img variant="top" src={item.image_url} />
                                     <Card.Body color="secondary">
                                     <Card.Title>{item.name}</Card.Title>
                                     <Card.Text>
@@ -66,8 +51,8 @@ const Home = ({ marketplace, nft }) => {
                                     </Card.Body>
                                     <Card.Footer>
                                     <div className='d-grid'>
-                                        <Button onClick={() => buyMarketItem(item)} variant="primary" size="lg">
-                                            Buy for {ethers.utils.formatEther(item.totalPrice)} ETH
+                                        <Button variant="primary" size="lg">
+                                            Pick
                                         </Button>
                                     </div>
                                     </Card.Footer>
@@ -78,7 +63,7 @@ const Home = ({ marketplace, nft }) => {
                 </div>
             : (
                 <main style={{ padding: "1rem 0" }}>
-                    <h2>No listed assets</h2>
+                    <h2>No listed assets for {account}</h2>
                 </main>
             )}
         </div>
