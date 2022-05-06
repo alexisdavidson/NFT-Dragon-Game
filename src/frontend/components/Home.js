@@ -6,7 +6,7 @@ const Home = ({ account }) => {
     const [loading, setLoading] = useState(true)
     const [items, setItems] = useState([])
     const loadMarketplaceItems = async () => {
-        
+
         // metadata at token_metadata (next api request https://scoundrelsmint.io/metadata/985.json )
 
         let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=0x91a96a8ed695b7c59c01f845f7bb522fe906d88d&format=json`)
@@ -47,6 +47,13 @@ const Home = ({ account }) => {
                                     <Card.Title>{item.name}</Card.Title>
                                     <Card.Text>
                                         {item.description}
+                                        <br/>
+                                        <br/>
+                                        Attack: {item.traits.filter(e => e.trait_type == "Attack")[0].value}
+                                        <br/>
+                                        Defense: {item.traits.filter(e => e.trait_type == "Defense")[0].value}
+                                        <br/>
+                                        Luck: {item.traits.filter(e => e.trait_type == "Luck")[0].value}
                                     </Card.Text>
                                     </Card.Body>
                                     <Card.Footer>
