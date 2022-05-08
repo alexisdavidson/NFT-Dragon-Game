@@ -3,31 +3,17 @@ import {
   Routes,
   Route
 } from "react-router-dom"
-import logo from './logo.png';
 import './App.css';
 import Navigation from './Navbar';
 import Home from './Home';
-import Create from './Create';
-import MyPurchases from './MyPurchases';
-import MyListedItems from './MyListedItems';
 
 import { useState } from 'react'
 import { ethers } from 'ethers'
 import { Spinner } from 'react-bootstrap'
-
-import MarketplaceAbi from '../contractsData/Marketplace.json'
-import MarketplaceAddress from '../contractsData/Marketplace-address.json'
-import NFTAbi from '../contractsData/NFT.json'
-import NFTAddress from '../contractsData/NFT-address.json'
-import DragonAbi from '../contractsData/Dragon.json'
-import DragonAddress from '../contractsData/Dragon-address.json'
  
 function App() {
   const [loading, setLoading] = useState(true)
   const [account, setAccount] = useState(null)
-  const [nft, setNFT] = useState({})
-  const [marketplace, setMarketplace] = useState({})
-  const [dragon, setDragon] = useState({})
 
   // MetaMask Login/Connect
   const web3Handler = async () => {
@@ -42,12 +28,6 @@ function App() {
   }
 
   const loadContracts = async (signer) => {
-    // const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer)
-    // setMarketplace(marketplace)
-    // const nft = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer)
-    // setNFT(nft)
-    // const dragon = new ethers.Contract(DragonAddress.address, DragonAbi.abi, signer)
-    // setDragon(dragon)
     setLoading(false)
   }
   return (
@@ -63,15 +43,6 @@ function App() {
           <Routes>
             <Route path="/" element={
               <Home account={account}/>
-            } />
-            <Route path="/create" element={
-              <Create marketplace={marketplace} nft={nft}/>
-            } />
-            <Route path="/my-listed-items" element={
-              <MyListedItems marketplace={marketplace} nft={nft} account={account}/>
-            } />
-            <Route path="/my-purchases" element={
-              <MyPurchases marketplace={marketplace} nft={nft} account={account}/>
             } />
           </Routes>
         ) }

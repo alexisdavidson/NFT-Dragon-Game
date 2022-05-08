@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react'
-import { ethers } from "ethers"
 import { Row, Col, Card, Button } from 'react-bootstrap'
 
 const Home = ({ account }) => {
     const [loading, setLoading] = useState(true)
     const [items, setItems] = useState([])
     const loadMarketplaceItems = async () => {
-
-        // metadata at token_metadata (next api request https://scoundrelsmint.io/metadata/985.json )
 
         let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=0x91a96a8ed695b7c59c01f845f7bb522fe906d88d&format=json`)
         .then((res) => res.json())
