@@ -6,10 +6,12 @@ import {
 import './App.css';
 import Navigation from './Navbar';
 import Home from './Home';
+import MatchmakingPool from './MatchmakingPool';
 
 import { useState } from 'react'
 import { ethers } from 'ethers'
 import { Spinner } from 'react-bootstrap'
+import MatchHistory from "./MatchHistory";
  
 function App() {
   const [loading, setLoading] = useState(true)
@@ -43,6 +45,12 @@ function App() {
           <Routes>
             <Route path="/" element={
               <Home account={account}/>
+            } />
+            <Route path="/matchmaking-pool" element={
+              <MatchmakingPool />
+            } />
+            <Route path="/match-history" element={
+              <MatchHistory />
             } />
           </Routes>
         ) }

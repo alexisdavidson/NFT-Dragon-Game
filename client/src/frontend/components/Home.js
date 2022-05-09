@@ -12,9 +12,10 @@ const Home = ({ account }) => {
         Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
             walletAddress: account,
             dragonId: dragonId
-        }).then(() => {
-            alert("Matchmaking pool joined.")
         })
+        
+        alert("Matchmaking pool joined.")
+        console.log("Matchmaking pool joined.")
     }
 
     const loadOpenSeaItems = async () => {
@@ -90,9 +91,6 @@ const Home = ({ account }) => {
                     <h2>No listed assets for {account}</h2>
                 </main>
             )}
-            {matchmakingPool.map((val) => {
-                return <h1>dragon: {val.dragon_id} | wallet: {val.wallet_address}</h1>
-            })}
         </div>
     );
 }
