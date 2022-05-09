@@ -1,10 +1,23 @@
 import { useState, useEffect } from 'react'
 import { Row, Col, Card, Button } from 'react-bootstrap'
+import Axios from 'axios'
 
 const Home = ({ account }) => {
     const [loading, setLoading] = useState(true)
     const [items, setItems] = useState([])
-    const loadMarketplaceItems = async () => {
+    const [matchmakingPool, setMatchmakingPool] = useState([])
+
+    const submitPick = (dragonId) => {
+        console.log("Pick dragon " + dragonId);
+        Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
+            walletAddress: account,
+            dragonId: dragonId
+        }).then(() => {
+            alert("Matchmaking pool joined.")
+        })
+    }
+
+    const loadOpenSeaItems = async () => {
 
         let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=0x91a96a8ed695b7c59c01f845f7bb522fe906d88d&format=json`)
         .then((res) => res.json())
@@ -21,8 +34,15 @@ const Home = ({ account }) => {
         setItems(items)
     }
 
+    const displayMatchmakingPool = async () => {
+        Axios.get('http://localhost:3001/api/get_matchmaking_pool').then((response) => {
+            setMatchmakingPool(response.data)
+        })
+    }
+
     useEffect(() => {
-        loadMarketplaceItems()
+        loadOpenSeaItems()
+        displayMatchmakingPool()
     }, [])
 
     if (loading) return (
@@ -55,7 +75,7 @@ const Home = ({ account }) => {
                                     </Card.Body>
                                     <Card.Footer>
                                     <div className='d-grid'>
-                                        <Button variant="primary" size="lg">
+                                        <Button variant="primary" size="lg" onClick={() => submitPick(item.token_id)}>
                                             Pick
                                         </Button>
                                     </div>
@@ -70,6 +90,9 @@ const Home = ({ account }) => {
                     <h2>No listed assets for {account}</h2>
                 </main>
             )}
+            {matchmakingPool.map((val) => {
+                return <h1>dragon: {val.dragon_id} | wallet: {val.wallet_address}</h1>
+            })}
         </div>
     );
 }
