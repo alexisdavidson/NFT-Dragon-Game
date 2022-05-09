@@ -30,6 +30,17 @@ app.get('/api/get_matchmaking_pool', (req, res) => {
     })
 })
 
+app.get('/api/get_match_history', (req, res) => {
+    const sqlSelect = "SELECT * FROM match_history;"
+    
+    db.query(sqlSelect, (err, result) => {
+        if (err) console.log(err)
+        if (result) console.log(result)
+
+        res.send(result)
+    })
+})
+
 app.post('/api/join_matchmaking_pool', (req, res) => {
     const walletAddress = req.body.walletAddress
     const dragonId = req.body.dragonId

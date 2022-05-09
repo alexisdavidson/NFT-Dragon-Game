@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react'
 import Axios from 'axios'
 
 const MatchHistory = () => {
-    const [matchmakingPool, setMatchmakingPool] = useState([])
+    const [matchHistory, setMatchHistory] = useState([])
 
-    const displayMatchmakingPool = async () => {
-        Axios.get('http://localhost:3001/api/get_matchmaking_pool').then((response) => {
-            setMatchmakingPool(response.data)
+    const displayMatchHistory = async () => {
+        Axios.get('http://localhost:3001/api/get_match_history').then((response) => {
+            setMatchHistory(response.data)
         })
     }
 
     useEffect(() => {
-        displayMatchmakingPool()
+        displayMatchHistory()
     }, [])
 
     return (
@@ -21,17 +21,25 @@ const MatchHistory = () => {
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Wallet</th>
-                        <th scope="col">Dragon</th>
+                        <th scope="col">Player 1</th>
+                        <th scope="col">Player 2</th>
+                        <th scope="col">Dragon 1</th>
+                        <th scope="col">Dragon 2</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Date</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {matchmakingPool.map((val) => {
+                    {matchHistory.map((val) => {
                         return (
                             <tr>
                                 <th scope="row">{val.id}</th>
-                                <td>{val.wallet_address}</td>
-                                <td>{val.dragon_id}</td>
+                                <td>{val.wallet1}</td>
+                                <td>{val.wallet2}</td>
+                                <td>{val.dragon1}</td>
+                                <td>{val.dragon2}</td>
+                                <td>{val.winner}</td>
+                                <td>{val.date_played}</td>
                             </tr>
                         );
                     })}
