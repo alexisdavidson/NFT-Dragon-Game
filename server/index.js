@@ -65,7 +65,6 @@ app.post('/api/join_matchmaking_pool', (req, res) => {
     const walletAddress = req.body.walletAddress
     const dragonId = req.body.dragonId
 
-    // todo: check if dragon/wallet not already in matchmaking_pool
     let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address = ? AND dragon_id = ? LIMIT 1;"
     
     db.query(sqlSelect, [walletAddress, dragonId], (err, result) => {

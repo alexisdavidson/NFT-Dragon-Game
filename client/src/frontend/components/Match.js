@@ -9,17 +9,28 @@ const Match = () => {
     const location = useLocation();
     const [items, setItems] = useState([])
 
-    const loadOpenSeaItems = async () => {
-        let items = await fetch(`https://api.opensea.io/api/v1/assets?asset_contract_address=0x91a96a8ed695b7c59c01f845f7bb522fe906d88d&format=json`)
+    const loadOpenSeaItems = async (match) => {
+        let dragon1 = await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon1}`)
         .then((res) => res.json())
-        .then((res) => {
-          return res.assets
-        })
+        .then((res) => { return res })
         .catch((e) => {
           console.error(e)
           console.error('Could not talk to OpenSea')
           return null
         })
+
+        let dragon2 = await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon2}`)
+        .then((res) => res.json())
+        .then((res) => { return res })
+        .catch((e) => {
+          console.error(e)
+          console.error('Could not talk to OpenSea')
+          return null
+        })
+
+        let items = []
+        items.push(dragon1)
+        items.push(dragon2)
 
         setLoading(false)
         setItems(items)
@@ -34,32 +45,31 @@ const Match = () => {
             }
         }).then((response) => {
             setMatch(response.data[0])
+
             console.log("Match winner is " + response.data[0].winner)
+            loadOpenSeaItems(response.data[0])
         })
-        
-        setLoading(false)
     }
 
     useEffect(() => {
-        loadOpenSeaItems()
         displayMatch()
     }, [])
 
     if (loading) return (
-        <main style={{ padding: "1rem 0" }}>
-        <h2>Loading...</h2>
-        </main>
+        <div className="flex justify-center">
+            <h2>Fight!</h2>
+        </div>
     )
 
     return (
         <div className="flex justify-center">
-            <h2>Match</h2>
-            <p>Winner of match {location.state.matchId} is: {match.winner}</p>
+            <h2>Fight!</h2>
+            {/* <p>Winner of match {location.state.matchId} is: {match.winner}</p> */}
                 
             <div className="flex justify-center">
                 {items.length > 0 ?
-                    <div className="px-5 container">
-                        <Row xs={1} md={2} lg={4} className="g-4 py-5">
+                    <div className="px-5">
+                        <Row xs={1} md={2} lg={4} className="g-4 py-5 d-flex justify-content-center">
                             {items.map((item, idx) => (
                                 <Col key={idx} className="overflow-hidden">
                                     <Card bg="dark">
@@ -67,7 +77,7 @@ const Match = () => {
                                         <Card.Body color="secondary">
                                         <Card.Title>{item.name}</Card.Title>
                                         <Card.Text>
-                                            {item.description}
+                                            {item.owner.address}
                                             <br/>
                                             <br/>
                                             Attack: {item.traits.filter(e => e.trait_type == "Attack")[0].value}
@@ -77,6 +87,15 @@ const Match = () => {
                                             Luck: {item.traits.filter(e => e.trait_type == "Luck")[0].value}
                                         </Card.Text>
                                         </Card.Body>
+                                        <Card.Footer>
+                                        <div className='d-grid'>
+                                            {idx + 1 == match.winner ?
+                                            <h2 className="text-success">Win</h2>
+                                            :
+                                            <h2 className="text-danger">Lose</h2>
+                                            }
+                                        </div>
+                                        </Card.Footer>
                                     </Card>
                                 </Col>
                             ))}
@@ -84,7 +103,7 @@ const Match = () => {
                     </div>
                 : (
                     <main style={{ padding: "1rem 0" }}>
-                        <h2>Error during loading.</h2>
+                        <h2>Loading...</h2>
                     </main>
                 )}
             </div>
