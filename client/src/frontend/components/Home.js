@@ -5,7 +5,7 @@ import Axios from 'axios'
 
 const Home = ({ account }) => {
     let navigate = useNavigate(); 
-    const routeChange = (matchId) =>{ 
+    const routeChangeMatch = (matchId) =>{ 
         let path = 'match'; 
         console.log("Navigate to match " + matchId)
         navigate(path, {
@@ -13,6 +13,10 @@ const Home = ({ account }) => {
                 matchId: matchId
             }
         });
+    }
+    const routeChangeMatchmaking = () =>{ 
+        let path = 'matchmaking'; 
+        navigate(path);
     }
 
     const [loading, setLoading] = useState(true)
@@ -29,16 +33,21 @@ const Home = ({ account }) => {
           }).then((response) => {
             if (response.data.length == 0) {
                 // No suitable opponent in matchmaking pool -> join the pool 
-                console.log("No opponent found")
+                console.log("No opponent found. Joining matchmaking pool")
                 Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
                     walletAddress: account,
                     dragonId: dragonId
+                }).then((response) => {
+                    if (response.data[0] == true) {
+                        console.log("Already in matchmaking pool.")
+                        alert("This dragon is already in the matchmaking pool.")
+                    }
+                    else {
+                        console.log("Matchmaking pool joined.")
+                        routeChangeMatchmaking()
+                    }
+                    console.log(response)
                 })
-
-                alert("Matchmaking pool joined.")
-                console.log("Matchmaking pool joined.")
-        
-                window.location.href="/matchmaking"
             }
             else {
                 // Suitable opponent found -> play match
@@ -56,7 +65,7 @@ const Home = ({ account }) => {
                     let matchId = response.data[0]
                     console.log(matchId)
                     
-                    routeChange(matchId);
+                    routeChangeMatch(matchId)
                 })
 
             }

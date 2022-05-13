@@ -66,11 +66,27 @@ app.post('/api/join_matchmaking_pool', (req, res) => {
     const dragonId = req.body.dragonId
 
     // todo: check if dragon/wallet not already in matchmaking_pool
-
-    const sqlInsert = "INSERT INTO matchmaking_pool (wallet_address, dragon_id, date_joined) VALUES (?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "');"
-    db.query(sqlInsert, [walletAddress, dragonId], (err, result) => {
+    let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address = ? AND dragon_id = ? LIMIT 1;"
+    
+    db.query(sqlSelect, [walletAddress, dragonId], (err, result) => {
         if (err) console.log(err)
-        if (result) console.log(result)
+        if (result) {
+            console.log(result)
+            if (result.length > 0) {
+                console.log("Found dragonId already in pool")
+                result[0] = true
+                res.send(result)
+            }
+            else {
+                const sqlInsert = "INSERT INTO matchmaking_pool (wallet_address, dragon_id, date_joined) VALUES (?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "');"
+                db.query(sqlInsert, [walletAddress, dragonId], (err2, result2) => {
+                    if (err2) console.log(err2)
+                    if (result2) console.log(result2.insertId)
+            
+                    res.send(result2)
+                })
+            }
+        }
     })
 })
 
@@ -85,10 +101,16 @@ app.post('/api/play_match', (req, res) => {
     db.query(sqlInsert, [walletAddress1, walletAddress2, dragonId1, dragonId2, winner], (err, result) => {
         if (err) console.log(err)
         if (result) {
-            // todo: remove both dragons from matchmaking
-            console.log(result)
-            console.log(result.insertId)
-            res.send([result.insertId])
+            const sqlDelete = "DELETE FROM matchmaking_pool WHERE (wallet_address = ? AND dragon_id = ?) OR (wallet_address = ? AND dragon_id = ?);"
+            db.query(sqlDelete, [walletAddress1, dragonId1, walletAddress2, dragonId2], (err2, result2) => {
+                if (err2) console.log(err2)
+                if (result2) {
+                    console.log(result)
+                    console.log(result2)
+                    console.log(result.insertId)
+                    res.send([result.insertId])
+                }
+            })
         }
     })
 })
