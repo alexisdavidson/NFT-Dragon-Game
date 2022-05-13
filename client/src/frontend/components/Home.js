@@ -8,10 +8,6 @@ const Home = ({ account }) => {
 
     const submitPick = (dragonId) => {
         console.log("Pick dragon " + dragonId);
-        // Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
-        //     walletAddress: account,
-        //     dragonId: dragonId
-        // })
         
         Axios.get('http://localhost:3001/api/get_opponent', {
             params: {
@@ -20,17 +16,41 @@ const Home = ({ account }) => {
             },
           }).then((response) => {
             if (response.data.length == 0) {
+                // No suitable opponent in matchmaking pool -> join the pool 
                 console.log("No opponent found")
+                Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
+                    walletAddress: account,
+                    dragonId: dragonId
+                })
+
+                alert("Matchmaking pool joined.")
+                console.log("Matchmaking pool joined.")
+        
+                window.location.href="/matchmaking"
             }
             else {
+                // Suitable opponent found -> play match
                 console.log(response.data)
+                
+                console.log("Opponent found. Starting match against " + response.data[0].dragon_id + ", " + response.data[0].wallet_address)
+                
+                Axios.get('http://localhost:3001/api/play_match', {
+                    params: {
+                        walletAddress1: account,
+                        dragonId1: dragonId,
+                        walletAddress2: response.data[0].wallet_address,
+                        dragonId2: response.data[0].dragon_id,
+                    },
+                }).then((response) => {
+                    console.log("Play match result: ")
+                    let matchId = response.data[0]
+                    console.log(matchId)
+                    window.location.href="/match/" + matchId
+                })
+
             }
         })
         
-        alert("Matchmaking pool joined.")
-        console.log("Matchmaking pool joined.")
-
-        // window.location.href="/matchmaking"
     }
 
     const loadOpenSeaItems = async () => {

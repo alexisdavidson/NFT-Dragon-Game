@@ -8,6 +8,7 @@ import Navigation from './Navbar';
 import Home from './Home';
 import MatchmakingPool from './MatchmakingPool';
 import Matchmaking from './Matchmaking';
+import Match from './Match';
 
 import { useState } from 'react'
 import { ethers } from 'ethers'
@@ -55,6 +56,9 @@ function App() {
             } />
             <Route path="/matchmaking" element={
               <Matchmaking />
+            } />
+            <Route path="/match" element={
+              <Match />
             } />
           </Routes>
         ) }
