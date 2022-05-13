@@ -1,8 +1,20 @@
 import { useState, useEffect } from 'react'
 import { Row, Col, Card, Button } from 'react-bootstrap'
+import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
 
 const Home = ({ account }) => {
+    let navigate = useNavigate(); 
+    const routeChange = (matchId) =>{ 
+        let path = 'match'; 
+        console.log("Navigate to match " + matchId)
+        navigate(path, {
+            state: {
+                matchId: matchId
+            }
+        });
+    }
+
     const [loading, setLoading] = useState(true)
     const [items, setItems] = useState([])
 
@@ -34,18 +46,17 @@ const Home = ({ account }) => {
                 
                 console.log("Opponent found. Starting match against " + response.data[0].dragon_id + ", " + response.data[0].wallet_address)
                 
-                Axios.get('http://localhost:3001/api/play_match', {
-                    params: {
-                        walletAddress1: account,
-                        dragonId1: dragonId,
-                        walletAddress2: response.data[0].wallet_address,
-                        dragonId2: response.data[0].dragon_id,
-                    },
+                Axios.post('http://localhost:3001/api/play_match', {
+                    walletAddress1: account,
+                    dragonId1: dragonId,
+                    walletAddress2: response.data[0].wallet_address,
+                    dragonId2: response.data[0].dragon_id,
                 }).then((response) => {
                     console.log("Play match result: ")
                     let matchId = response.data[0]
                     console.log(matchId)
-                    window.location.href="/match/" + matchId
+                    
+                    routeChange(matchId);
                 })
 
             }
