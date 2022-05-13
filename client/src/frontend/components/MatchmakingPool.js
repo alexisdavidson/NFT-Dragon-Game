@@ -17,7 +17,7 @@ const MatchmakingPool = () => {
     return (
         <div className="flex justify-center">
             <h2>Matchmaking Pool</h2>
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped table-dark">
                 <thead>
                     <tr>
                         <th scope="col">#</th>

@@ -97,7 +97,7 @@ const Home = ({ account }) => {
                     <Row xs={1} md={2} lg={4} className="g-4 py-5">
                         {items.map((item, idx) => (
                             <Col key={idx} className="overflow-hidden">
-                                <Card>
+                                <Card bg="dark">
                                     <Card.Img variant="top" src={item.image_url} />
                                     <Card.Body color="secondary">
                                     <Card.Title>{item.name}</Card.Title>
@@ -114,7 +114,7 @@ const Home = ({ account }) => {
                                     </Card.Body>
                                     <Card.Footer>
                                     <div className='d-grid'>
-                                        <Button variant="primary" size="lg" onClick={() => submitPick(item.token_id)}>
+                                        <Button variant="success" size="lg" onClick={() => submitPick(item.token_id)}>
                                             Pick
                                         </Button>
                                     </div>

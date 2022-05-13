@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {useLocation} from 'react-router-dom';
 import Axios from 'axios'
 
-const Match = ({ matchId }) => {
+const Match = () => {
     const [match, setMatch] = useState([])
     const location = useLocation();
 
@@ -15,7 +15,7 @@ const Match = ({ matchId }) => {
             }
         }).then((response) => {
             setMatch(response.data[0])
-            console.log("Match winner is " + match.winner)
+            console.log("Match winner is " + response.data[0].winner)
         })
     }
 

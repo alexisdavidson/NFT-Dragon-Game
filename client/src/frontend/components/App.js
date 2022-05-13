@@ -11,7 +11,6 @@ import Matchmaking from './Matchmaking';
 import Match from './Match';
 
 import { useState } from 'react'
-import { ethers } from 'ethers'
 import { Spinner } from 'react-bootstrap'
 import MatchHistory from "./MatchHistory";
  
@@ -23,17 +22,9 @@ function App() {
   const web3Handler = async () => {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     setAccount(accounts[0])
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-    const signer = provider.getSigner()
-
-    loadContracts(signer)
-  }
-
-  const loadContracts = async (signer) => {
     setLoading(false)
   }
+
   return (
     <BrowserRouter>
       <div className="App">
@@ -46,19 +37,19 @@ function App() {
         ) : (
           <Routes>
             <Route path="/" element={
-              <Home account={account}/>
+              <Home account={account} />
             } />
             <Route path="/matchmaking-pool" element={
-              <MatchmakingPool />
+              <MatchmakingPool account={account} />
             } />
             <Route path="/match-history" element={
-              <MatchHistory />
+              <MatchHistory account={account} />
             } />
             <Route path="/matchmaking" element={
-              <Matchmaking />
+              <Matchmaking account={account} />
             } />
             <Route path="/match" element={
-              <Match />
+              <Match account={account} />
             } />
           </Routes>
         ) }
