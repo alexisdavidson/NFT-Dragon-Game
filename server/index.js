@@ -15,6 +15,8 @@ const db = mysql.createPool({
     database: process.env.DB
 })
 
+const canFightOwnWallet = process.env.CANFIGHTOWNWALLET
+
 app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -34,6 +36,26 @@ app.get('/api/get_match_history', (req, res) => {
     const sqlSelect = "SELECT * FROM match_history;"
     
     db.query(sqlSelect, (err, result) => {
+        if (err) console.log(err)
+        if (result) console.log(result)
+
+        res.send(result)
+    })
+})
+
+// Get opponent from matchmaking pool
+app.get('/api/get_opponent', (req, res) => {
+    const walletAddress = req.query.walletAddress
+    const dragonId = req.query.dragonId
+
+    let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address != ? AND dragon_id != ? LIMIT 1;"
+
+    console.log(canFightOwnWallet)
+    if (canFightOwnWallet === "TRUE") {
+        sqlSelect = "SELECT * FROM matchmaking_pool WHERE dragon_id != ? AND dragon_id != ? LIMIT 1;"
+    }
+    
+    db.query(sqlSelect, [walletAddress, dragonId], (err, result) => {
         if (err) console.log(err)
         if (result) console.log(result)
 

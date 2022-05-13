@@ -5,21 +5,35 @@ import Axios from 'axios'
 const Home = ({ account }) => {
     const [loading, setLoading] = useState(true)
     const [items, setItems] = useState([])
-    const [matchmakingPool, setMatchmakingPool] = useState([])
 
     const submitPick = (dragonId) => {
         console.log("Pick dragon " + dragonId);
-        Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
-            walletAddress: account,
-            dragonId: dragonId
+        // Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
+        //     walletAddress: account,
+        //     dragonId: dragonId
+        // })
+        
+        Axios.get('http://localhost:3001/api/get_opponent', {
+            params: {
+                walletAddress: account,
+                dragonId: dragonId
+            },
+          }).then((response) => {
+            if (response.data.length == 0) {
+                console.log("No opponent found")
+            }
+            else {
+                console.log(response.data)
+            }
         })
         
         alert("Matchmaking pool joined.")
         console.log("Matchmaking pool joined.")
+
+        // window.location.href="/matchmaking"
     }
 
     const loadOpenSeaItems = async () => {
-
         let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=0x91a96a8ed695b7c59c01f845f7bb522fe906d88d&format=json`)
         .then((res) => res.json())
         .then((res) => {
@@ -35,15 +49,8 @@ const Home = ({ account }) => {
         setItems(items)
     }
 
-    const displayMatchmakingPool = async () => {
-        Axios.get('http://localhost:3001/api/get_matchmaking_pool').then((response) => {
-            setMatchmakingPool(response.data)
-        })
-    }
-
     useEffect(() => {
         loadOpenSeaItems()
-        displayMatchmakingPool()
     }, [])
 
     if (loading) return (
