@@ -14,9 +14,13 @@ const Home = ({ account }) => {
             }
         });
     }
-    const routeChangeMatchmaking = () =>{ 
+    const routeChangeMatchmaking = (dragon) =>{ 
         let path = 'matchmaking'; 
-        navigate(path);
+        navigate(path, {
+            state: {
+                dragon: dragon
+            }
+        });
     }
 
     const [loading, setLoading] = useState(true)
@@ -44,7 +48,7 @@ const Home = ({ account }) => {
                     }
                     else {
                         console.log("Matchmaking pool joined.")
-                        routeChangeMatchmaking()
+                        routeChangeMatchmaking(dragonId)
                     }
                     console.log(response)
                 })
