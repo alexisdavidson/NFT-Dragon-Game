@@ -65,8 +65,36 @@ const Match = () => {
         <div className="flex justify-center">
             <h2>Fight!</h2>
             {/* <p>Winner of match {location.state.matchId} is: {match.winner}</p> */}
-            <p>Battle log: {match.battle_log}</p>
-                
+            {/* <p>Battle log: {match.battle_log}</p> */}
+            <table className="table table-bordered table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">Dragon</th>
+                        <th scope="col">Attack</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {JSON.parse(match.battle_log).map((val) => {
+                        return (
+                            <tr>
+                                <th scope="row">{val.dragon}</th>
+                                <td>
+                                    {val.isCriticalStrike ? 
+                                        <b className="text-danger"> 
+                                            {val.attackValue}
+                                        </b>
+                                    :
+                                        <span> 
+                                            {val.attackValue}
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+
             <div className="flex justify-center">
                 {items.length > 0 ?
                     <div className="px-5">
