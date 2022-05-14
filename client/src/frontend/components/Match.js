@@ -65,6 +65,7 @@ const Match = () => {
         <div className="flex justify-center">
             <h2>Fight!</h2>
             {/* <p>Winner of match {location.state.matchId} is: {match.winner}</p> */}
+            <p>Battle log: {match.battle_log}</p>
                 
             <div className="flex justify-center">
                 {items.length > 0 ?

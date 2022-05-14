@@ -1,10 +1,12 @@
-const express = require('express')
+import express from 'express'
+import mysql from 'mysql'
+import dotenv from 'dotenv'
+import cors from 'cors'
+import bodyParser from 'body-parser'
+import moment from 'moment'
+import { battle } from './battle.js'
+
 const app = express()
-const mysql = require('mysql')
-const dotenv = require('dotenv')
-const cors = require('cors')
-const bodyParser = require('body-parser')
-const moment = require('moment')
 
 dotenv.config()
 
@@ -89,15 +91,20 @@ app.post('/api/join_matchmaking_pool', (req, res) => {
     })
 })
 
-app.post('/api/play_match', (req, res) => {
+app.post('/api/play_match', async (req, res) => {
     const walletAddress1 = req.body.walletAddress1
     const walletAddress2 = req.body.walletAddress2
     const dragonId1 = req.body.dragonId1
     const dragonId2 = req.body.dragonId2
-    const winner = Math.floor(Math.random() * 2) + 1 // todo: the actual fight to determine winner (deterministic)
 
-    const sqlInsert = "INSERT INTO match_history (wallet1, wallet2, dragon1, dragon2, winner, date_played) VALUES (?, ?, ?, ?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "');"
-    db.query(sqlInsert, [walletAddress1, walletAddress2, dragonId1, dragonId2, winner], (err, result) => {
+    const battleLog = await battle(dragonId1, dragonId2)
+    const winner = battleLog.winner
+    delete battleLog["winner"]
+    console.log("battleLog:")
+    console.log(battleLog)
+
+    const sqlInsert = "INSERT INTO match_history (wallet1, wallet2, dragon1, dragon2, battle_log, winner, date_played) VALUES (?, ?, ?, ?, ?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "');"
+    db.query(sqlInsert, [walletAddress1, walletAddress2, dragonId1, dragonId2, JSON.stringify(battleLog), winner], (err, result) => {
         if (err) console.log(err)
         if (result) {
             const sqlDelete = "DELETE FROM matchmaking_pool WHERE (wallet_address = ? AND dragon_id = ?) OR (wallet_address = ? AND dragon_id = ?);"
