@@ -14,6 +14,12 @@ const Match = (account) => {
     let [loop, setLoop] = useState([])
 
     const playedDragonId = 1
+    let dragonNoflip = null
+    let dragonFlip = null
+    let displayOffset = 2
+    let currentActiveDragon = 1
+    let matchLength = 0
+    let elementsShown = 0
 
     const loadOpenSeaItems = async (match) => {
         let dragon1 = await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon1}`)
@@ -43,7 +49,8 @@ const Match = (account) => {
         setLoading(false)
         setItems(items)
         
-        // showDragons()
+        matchLength = JSON.parse(match.battle_log).length
+        currentActiveDragon = JSON.parse(match.battle_log)[0].dragon
     }
 
     const showDragons = () => {
@@ -104,12 +111,54 @@ const Match = (account) => {
         })
     }
 
+    const startBattleEventAnimation = () => {
+        dragonFlip = document.querySelector('.dragon-flip');
+        dragonNoflip = document.querySelector('.dragon-noflip');
+
+        // console.log(currentActiveDragon)
+        // console.log(dragonFlip)
+        // console.log(dragonNoflip)
+
+        if (currentActiveDragon == 1) {
+            dragonFlip.classList.add('dragon-flip-attack');
+            dragonNoflip.classList.add('dragon-hurt');
+        }
+        else {
+            dragonNoflip.classList.add('dragon-attack');
+            dragonFlip.classList.add('dragon-flip-hurt');
+        }
+        
+        currentActiveDragon = 1 - (currentActiveDragon - 1) + 1
+
+        setTimeout(function(){
+            if (elementsShown - displayOffset < matchLength) {
+                let dragonAttack = document.querySelector('.dragon-attack')
+                if (dragonAttack != null) dragonNoflip.classList.remove('dragon-attack');
+                let dragonHurt = document.querySelector('.dragon-hurt')
+                if (dragonHurt != null) dragonNoflip.classList.remove('dragon-hurt');
+                let dragonFlipAttack = document.querySelector('.dragon-flip-attack')
+                if (dragonFlipAttack != null) dragonFlip.classList.remove('dragon-flip-attack');
+                let dragonFlipHurt = document.querySelector('.dragon-flip-hurt')
+                if (dragonFlipHurt != null) dragonFlip.classList.remove('dragon-flip-hurt');
+
+                let dragonGlow = document.querySelector('.dragon-glow');
+                if (dragonGlow != null) dragonGlow.classList.remove('dragon-glow')
+        
+                if (currentActiveDragon == 1) {
+                    dragonFlip.classList.add('dragon-glow');
+                }
+                else {
+                    dragonNoflip.classList.add('dragon-glow');
+                }
+            }
+        }, 1200);
+    }
+
     const createIntervalLoop = () => {
-        let elementsShown = 0
         function displayText() {
             var element = document.querySelector('.linko-hide');
           
-          if (null === element) {
+            if (null === element) {
                 clearInterval(loop);
                 var elementResult = document.querySelector('.result-hide');
                 if (elementResult != null) {
@@ -123,10 +172,8 @@ const Match = (account) => {
                 element.classList.remove('linko-hide');
                 element.classList.add('linko-show');
 
-                if (elementsShown > 2 || true) {
-                    var elementDragon = document.querySelector('.dragon-flip');
-                    elementDragon.classList.remove('dragon-flip-attack');
-                    elementDragon.classList.add('dragon-flip-attack');
+                if (elementsShown >= displayOffset && elementsShown - displayOffset < matchLength) {
+                    startBattleEventAnimation()
                 }
 
                 elementsShown += 1
@@ -157,7 +204,7 @@ const Match = (account) => {
                 <div className="px-5 container">
                     <Row>
                         <Col xs="3">
-                            <p className="py-3 linko dragon-hide">
+                            <p className="py-3">
                                 {items[0].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
                                 {items[0].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
                                 {items[0].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
@@ -165,7 +212,7 @@ const Match = (account) => {
                         </Col>
                         <Col><h2>Fight!</h2></Col>
                         <Col xs="3">
-                            <p className="py-3 linko dragon-hide">
+                            <p className="py-3">
                                 {items[1].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
                                 {items[1].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
                                 {items[1].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
@@ -208,7 +255,7 @@ const Match = (account) => {
                         </Col>
 
                         <Col xs="3">
-                            <img src={items[1].image_url} width="300"></img>
+                            <img src={items[1].image_url} width="300" className="dragon-noflip"></img>
                             <div className='d-grid'>
                                 <br/>
                                 {match.winner === 2 ?
