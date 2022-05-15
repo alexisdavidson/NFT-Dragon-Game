@@ -11,7 +11,8 @@ const Home = ({ account }) => {
         console.log("Navigate to match " + matchId)
         navigate(path, {
             state: {
-                matchId: matchId
+                matchId: matchId,
+                account: account
             }
         });
     }

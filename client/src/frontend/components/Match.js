@@ -3,11 +3,13 @@ import { Row, Col, Card, Button } from 'react-bootstrap'
 import {useLocation} from 'react-router-dom';
 import Axios from 'axios'
 
-const Match = () => {
+const Match = (account) => {
     const [match, setMatch] = useState([])
     const [loading, setLoading] = useState(true)
     const location = useLocation();
     const [items, setItems] = useState([])
+
+    const playedDragonId = 1
 
     const loadOpenSeaItems = async (match) => {
         let dragon1 = await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon1}`)
@@ -28,12 +30,46 @@ const Match = () => {
           return null
         })
 
+        if (dragon2.owner.account == account) playedDragonId = 2
+
         let items = []
         items.push(dragon1)
         items.push(dragon2)
 
         setLoading(false)
         setItems(items)
+    }
+
+    const attackText = (dragonId) => {
+        // console.log("dragonId: " + dragonId + ", playerDragonId: " + playedDragonId)
+        if (dragonId == playedDragonId)
+            return "You attack"
+        else return "Opponent attacks"
+    }
+
+    const goFirstText = (dragonId) => {
+        // console.log("dragonId: " + dragonId + ", playerDragonId: " + playedDragonId)
+        if (dragonId == playedDragonId)
+            return "You go first!"
+        else return "Opponent goes first!"
+    }
+
+    const defeatedText = () => {
+        let battle_log = JSON.parse(match.battle_log)
+        let lastDragonAttacking = battle_log[battle_log.length - 1].dragon
+
+        if (lastDragonAttacking == playedDragonId)
+            return "You have defeated the opponent!"
+        else return "You have been defeated."
+    }
+
+    const victoryOrDefeatText = () => {
+        let battle_log = JSON.parse(match.battle_log)
+        let lastDragonAttacking = battle_log[battle_log.length - 1].dragon
+
+        if (lastDragonAttacking == playedDragonId)
+            return "Victory!"
+        else return "Defeat."
     }
 
     const displayMatch = async () => {
@@ -68,8 +104,8 @@ const Match = () => {
                     <h2>Fight!</h2>
                     {/* <p>Winner of match {location.state.matchId} is: {match.winner}</p> */}
                     {/* <p>Battle log: {match.battle_log}</p> */}
-                    <Row className="g-4 d-flex justify-content-center">
-                        <Col>
+                    <Row>
+                        <Col xs="3">
                             <Card bg="dark">
                                 <Card.Img variant="top" src={items[0].image_url} />
                                 <Card.Body color="secondary">
@@ -97,38 +133,24 @@ const Match = () => {
                             </Card>
                         </Col>
                         
+                        <Col xs="1"></Col>
                         <Col>
-                            <table className="table table-bordered table-striped table-dark">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Dragon</th>
-                                        <th scope="col">Attack</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {JSON.parse(match.battle_log).map((val) => {
-                                        return (
-                                            <tr>
-                                                <th scope="row">{val.dragon}</th>
-                                                <td>
-                                                    {val.isCriticalStrike ? 
-                                                        <b className="text-danger"> 
-                                                            {val.attackValue}
-                                                        </b>
-                                                    :
-                                                        <span> 
-                                                            {val.attackValue}
-                                                        </span>
-                                                    }
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                            <p style={{textAlign:"left"}}> The Battle Begins! </p>
+                            <p style={{textAlign:"left"}}> {goFirstText(JSON.parse(match.battle_log)[0].dragon)} </p>
+                            {JSON.parse(match.battle_log).map((val) => {
+                                return (
+                                    <p style={{textAlign:"left"}}>
+                                        {
+                                            attackText(val.dragon)} for {val.attackValue} damage. {val.isCriticalStrike ? <b> Critical Strike! </b> : <span></span>
+                                        }
+                                    </p>
+                                );
+                            })}
+                            <p style={{textAlign:"left"}}> {defeatedText()} </p>
+                            <p style={{textAlign:"left"}}> {victoryOrDefeatText()} </p>
                         </Col>
 
-                        <Col>
+                        <Col xs="3">
                             <Card bg="dark">
                                 <Card.Img variant="top" src={items[1].image_url} />
                                 <Card.Body color="secondary">
@@ -156,6 +178,37 @@ const Match = () => {
                             </Card>
                         </Col>
                     </Row>
+                    {/* <Row>
+                        <h2>Battle Summary</h2>
+                        <table style={{textAlign:"center"}} className="table table-bordered table-striped table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Dragon</th>
+                                    <th scope="col">Attack</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {JSON.parse(match.battle_log).map((val) => {
+                                    return (
+                                        <tr>
+                                            <th scope="row">{val.dragon}</th>
+                                            <td>
+                                                {val.isCriticalStrike ? 
+                                                    <b> 
+                                                        {val.attackValue}!
+                                                    </b>
+                                                :
+                                                    <span> 
+                                                        {val.attackValue}
+                                                    </span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </Row> */}
                 </div>
             : (
                 <main style={{ padding: "1rem 0" }}>
