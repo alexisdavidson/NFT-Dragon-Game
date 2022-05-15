@@ -8,6 +8,7 @@ const Match = (account) => {
     const [loading, setLoading] = useState(true)
     const location = useLocation();
     const [items, setItems] = useState([])
+    let [loop, setLoop] = useState([])
 
     const playedDragonId = 1
 
@@ -87,8 +88,34 @@ const Match = (account) => {
         })
     }
 
+    const createIntervalLoop = () => {
+        function displayText() {
+            var element = document.querySelector('.linko-hide');
+          
+          if (null === element) {
+                clearInterval(loop);
+                var elementResult = document.querySelector('.result-hide');
+                elementResult.classList.remove('result-hide');
+                elementResult.classList.add('linko-show');
+                elementResult = document.querySelector('.result-hide');
+                elementResult.classList.remove('result-hide');
+                elementResult.classList.add('linko-show');
+            } else {
+                element.classList.remove('linko-hide');
+                element.classList.add('linko-show');
+            }
+          }
+          
+          setLoop(setInterval(function () {
+              displayText();
+          }, 3000));
+    }
+
+
     useEffect(() => {
+        if (loop != null) clearInterval(loop);
         displayMatch()
+        createIntervalLoop()
     }, [])
 
     if (loading) return (
@@ -124,9 +151,9 @@ const Match = (account) => {
                                 <Card.Footer>
                                 <div className='d-grid'>
                                     {match.winner == 1 ?
-                                    <h2 className="text-success">Win</h2>
+                                    <h2 className="text-success linko result-hide">Win</h2>
                                     :
-                                    <h2 className="text-danger">Lose</h2>
+                                    <h2 className="text-danger linko result-hide">Lose</h2>
                                     }
                                 </div>
                                 </Card.Footer>
@@ -135,19 +162,19 @@ const Match = (account) => {
                         
                         <Col xs="1"></Col>
                         <Col>
-                            <p style={{textAlign:"left"}}> The Battle Begins! </p>
-                            <p style={{textAlign:"left"}}> {goFirstText(JSON.parse(match.battle_log)[0].dragon)} </p>
+                            <p style={{textAlign:"left"}} className="linko linko-hide"> The Battle Begins! </p>
+                            <p style={{textAlign:"left"}} className="linko linko-hide"> {goFirstText(JSON.parse(match.battle_log)[0].dragon)} </p>
                             {JSON.parse(match.battle_log).map((val) => {
                                 return (
-                                    <p style={{textAlign:"left"}}>
+                                    <p style={{textAlign:"left"}} className="linko linko-hide">
                                         {
                                             attackText(val.dragon)} for {val.attackValue} damage. {val.isCriticalStrike ? <b> Critical Strike! </b> : <span></span>
                                         }
                                     </p>
                                 );
                             })}
-                            <p style={{textAlign:"left"}}> {defeatedText()} </p>
-                            <p style={{textAlign:"left"}}> {victoryOrDefeatText()} </p>
+                            <p style={{textAlign:"left"}} className="linko linko-hide"> {defeatedText()} </p>
+                            <p style={{textAlign:"left"}} className="linko linko-hide"> {victoryOrDefeatText()} </p>
                         </Col>
 
                         <Col xs="3">
@@ -169,9 +196,9 @@ const Match = (account) => {
                                 <Card.Footer>
                                 <div className='d-grid'>
                                     {match.winner == 2 ?
-                                    <h2 className="text-success">Win</h2>
+                                    <h2 className="text-success linko result-hide">Win</h2>
                                     :
-                                    <h2 className="text-danger">Lose</h2>
+                                    <h2 className="text-danger linko result-hide">Lose</h2>
                                     }
                                 </div>
                                 </Card.Footer>

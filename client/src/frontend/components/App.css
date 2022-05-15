@@ -11,3 +11,19 @@ h2 {
   margin-top: 20px;
   margin-bottom: 40px;
 }
+
+.linko {
+  transition: opacity 1500ms linear;
+}
+
+.linko.linko-hide {
+  opacity: 0;
+}
+
+.linko.result-hide {
+  opacity: 0;
+}
+
+.linko.linko-show {
+  opacity: 1;
+}
