@@ -35,7 +35,13 @@ app.get('/api/get_matchmaking_pool', (req, res) => {
 })
 
 app.get('/api/get_match_history', (req, res) => {
-    const sqlSelect = "SELECT * FROM match_history ORDER BY id DESC;"
+    let sqlSelect = "SELECT * FROM match_history"
+
+    const walletAddress = req.query.walletAddress
+    if (walletAddress != undefined && walletAddress != null) sqlSelect += " WHERE wallet1 = '" + walletAddress + "' OR wallet2 = '" + walletAddress + "'"
+    sqlSelect += " ORDER BY id DESC"
+    if (walletAddress != undefined && walletAddress != null) sqlSelect += " LIMIT 10"
+    sqlSelect += ";"
     
     db.query(sqlSelect, (err, result) => {
         if (err) console.log(err)

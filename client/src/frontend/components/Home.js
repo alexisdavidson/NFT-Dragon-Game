@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import { Row, Col, Card, Button } from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
+import moment from 'moment'
 
 const Home = ({ account }) => {
     let navigate = useNavigate(); 
     const routeChangeMatch = (matchId) =>{ 
-        let path = 'match'; 
+        let path = '/match'; 
         console.log("Navigate to match " + matchId)
         navigate(path, {
             state: {
@@ -25,6 +26,22 @@ const Home = ({ account }) => {
 
     const [loading, setLoading] = useState(true)
     const [items, setItems] = useState([])
+    const [matchHistory, setMatchHistory] = useState([])
+
+    const displayMatchHistory = async () => {
+        Axios.get('http://localhost:3001/api/get_match_history', {
+            params: {
+                walletAddress: account
+            },
+          }).then((response) => {
+            setMatchHistory(response.data)
+        })
+    }
+
+    const submitWatchBattle = (matchId) => {
+        console.log("Watch battle of match id " + matchId)
+        routeChangeMatch(matchId)
+    }
 
     const submitPick = (dragonId) => {
         console.log("Pick dragon " + dragonId);
@@ -95,6 +112,7 @@ const Home = ({ account }) => {
 
     useEffect(() => {
         loadOpenSeaItems()
+        displayMatchHistory()
     }, [])
 
     if (loading) return (
@@ -105,8 +123,8 @@ const Home = ({ account }) => {
 
     return (
         <div className="flex justify-center">
-            {items.length > 0 ?
-                <div className="px-5 container">
+            <div className="px-5 container">
+                {items.length > 0 ?
                     <Row xs={1} md={2} lg={4} className="g-4 py-5">
                         {items.map((item, idx) => (
                             <Col key={idx} className="overflow-hidden">
@@ -136,12 +154,46 @@ const Home = ({ account }) => {
                             </Col>
                         ))}
                     </Row>
-                </div>
-            : (
-                <main style={{ padding: "1rem 0" }}>
-                    <h2>No listed assets for {account}</h2>
-                </main>
-            )}
+                : (
+                    <main style={{ padding: "1rem 0" }}>
+                        <h2>No listed assets for {account}</h2>
+                    </main>
+                )}
+                <Row>
+                    <h2>Match History</h2>
+                    <table className="table table-bordered table-striped table-dark">
+                        <thead>
+                            <tr>
+                                <th scope="col">Replay</th>
+                                <th scope="col">Result</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Opponent</th>
+                                <th scope="col">Your Dragon</th>
+                                <th scope="col">Opponent's Dragon</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {matchHistory.map((val) => {
+                                return (
+                                    <tr>
+                                        <td>
+                                            <Button className="py-0" variant="secondary" size="sm" onClick={() => submitWatchBattle(val.id)}>
+                                                Replay
+                                            </Button>
+                                        </td>
+                                        <th scope="row">{val.wallet1 == account ? (val.winner == 1 ? <b className="text-success">Victory!</b> : <span className="text-danger">Defeat</span>) 
+                                            : (val.winner == 2 ? <b className="text-success">Victory!</b> : <span className="text-danger">Defeat</span>)}</th>
+                                        <td>{moment(val.date_played).format('MM/DD/YYYY hh:mm')}</td>
+                                        <td>{val.wallet1 == account ? val.wallet2 : val.wallet1}</td>
+                                        <td>{val.wallet1 == account ? val.dragon1 : val.dragon2}</td>
+                                        <td>{val.wallet1 == account ? val.dragon2 : val.dragon1}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </Row>
+            </div>
         </div>
     );
 }
