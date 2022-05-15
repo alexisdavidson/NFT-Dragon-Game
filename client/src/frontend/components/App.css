@@ -31,3 +31,90 @@ h2 {
 .linko.linko-show {
   opacity: 1;
 }
+
+.dragon-flip {
+  transform: scaleX(-1);
+}
+
+.dragon-noflip {
+}
+
+.dragon-glow {
+    box-shadow: 0px 0px 50px #fff;
+}
+
+.dragon-glow:hover {
+  /* animation: attackFlip 0.5s; */
+}
+
+.dragon-attack {
+  animation: attack 0.5s;
+}
+
+.dragon-flip-attack {
+  animation: attackFlip 0.5s;
+}
+
+@keyframes attack {
+  0% { transform: translate(-1px, 0px); }
+  10% { transform: translate(-8px, 0px); }
+  20% { transform: translate(-16px, 0px); }
+  30% { transform: translate(-28px, 0px); }
+  40% { transform: translate(-20px, -9px); }
+  50% { transform: translate(-12px, -6px); }
+  60% { transform: translate(-9px, -3px); }
+  70% { transform: translate(-3px, 0px); }
+  80% { transform: translate(0px, 0px); }
+  90% { transform: translate(0px, 0px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+@keyframes attackFlip {
+  0% { transform: translate(1px, 0px) scaleX(-1); }
+  10% { transform: translate(8px, 0px) scaleX(-1); }
+  20% { transform: translate(16px, 0px) scaleX(-1); }
+  30% { transform: translate(28px, 0px) scaleX(-1); }
+  40% { transform: translate(20px, -9px) scaleX(-1); }
+  50% { transform: translate(12px, -6px) scaleX(-1); }
+  60% { transform: translate(9px, -3px) scaleX(-1); }
+  70% { transform: translate(3px, 0px) scaleX(-1); }
+  80% { transform: translate(0px, 0px) scaleX(-1); }
+  90% { transform: translate(0px, 0px) scaleX(-1); }
+  100% { transform: translate(0px, 0px) scaleX(-1); }
+}
+
+.dragon-hurt {
+  animation: shake 0.3s;
+}
+
+.dragon-flip-hurt {
+  animation: shakeFlip 0.3s;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+@keyframes shakeFlip {
+  0% { transform: translate(1px, 1px) rotate(0deg) scaleX(-1); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg) scaleX(-1); }
+  20% { transform: translate(-3px, 0px) rotate(1deg) scaleX(-1); }
+  30% { transform: translate(3px, 2px) rotate(0deg) scaleX(-1); }
+  40% { transform: translate(1px, -1px) rotate(1deg) scaleX(-1); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg) scaleX(-1); }
+  60% { transform: translate(-3px, 1px) rotate(0deg) scaleX(-1); }
+  70% { transform: translate(3px, 1px) rotate(-1deg) scaleX(-1); }
+  80% { transform: translate(-1px, -1px) rotate(1deg) scaleX(-1); }
+  90% { transform: translate(1px, 2px) rotate(0deg) scaleX(-1); }
+  100% { transform: translate(1px, -2px) rotate(-1deg) scaleX(-1); }
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Row, Col, Card } from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
 import {useLocation} from 'react-router-dom';
 import Axios from 'axios'
 import attackIcon from '../images/attack.png'
@@ -42,6 +42,19 @@ const Match = (account) => {
 
         setLoading(false)
         setItems(items)
+        
+        // showDragons()
+    }
+
+    const showDragons = () => {
+        var elementResult = document.querySelector('.dragon-hide');
+        if (elementResult != null) {
+            elementResult.classList.remove('dragon-hide');
+            elementResult.classList.add('linko-show');
+            elementResult = document.querySelector('.dragon-hide');
+            elementResult.classList.remove('dragon-hide');
+            elementResult.classList.add('linko-show');
+        }
     }
 
     const attackText = (dragonId) => {
@@ -88,17 +101,11 @@ const Match = (account) => {
 
             console.log("Match winner is " + response.data[0].winner)
             loadOpenSeaItems(response.data[0])
-
-            // var elementResult = document.querySelector('.dragon-hide');
-            // elementResult.classList.remove('dragon-hide');
-            // elementResult.classList.add('linko-show');
-            // elementResult = document.querySelector('.dragon-hide');
-            // elementResult.classList.remove('dragon-hide');
-            // elementResult.classList.add('linko-show');
         })
     }
 
     const createIntervalLoop = () => {
+        let elementsShown = 0
         function displayText() {
             var element = document.querySelector('.linko-hide');
           
@@ -115,6 +122,14 @@ const Match = (account) => {
             } else {
                 element.classList.remove('linko-hide');
                 element.classList.add('linko-show');
+
+                if (elementsShown > 2 || true) {
+                    var elementDragon = document.querySelector('.dragon-flip');
+                    elementDragon.classList.remove('dragon-flip-attack');
+                    elementDragon.classList.add('dragon-flip-attack');
+                }
+
+                elementsShown += 1
             }
           }
           
@@ -142,7 +157,7 @@ const Match = (account) => {
                 <div className="px-5 container">
                     <Row>
                         <Col xs="3">
-                            <p className="py-3">
+                            <p className="py-3 linko dragon-hide">
                                 {items[0].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
                                 {items[0].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
                                 {items[0].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
@@ -150,7 +165,7 @@ const Match = (account) => {
                         </Col>
                         <Col><h2>Fight!</h2></Col>
                         <Col xs="3">
-                            <p className="py-3">
+                            <p className="py-3 linko dragon-hide">
                                 {items[1].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
                                 {items[1].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
                                 {items[1].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
@@ -161,12 +176,13 @@ const Match = (account) => {
                     {/* <p>Battle log: {match.battle_log}</p> */}
                     <Row>
                         <Col xs="3">
-                            <img src={items[0].image_url} width="300" className="dragon-hide"></img>
+                            <img src={items[0].image_url} width="300" className="dragon-flip dragon-glow"></img>
                             <div className='d-grid'>
+                                <br/>
                                 {match.winner === 1 ?
-                                <h2 className="text-success linko result-hide">Win</h2>
+                                <h2 className="text-success linko result-hide">Victory</h2>
                                 :
-                                <h2 className="text-danger linko result-hide">Lose</h2>
+                                <h2 className="text-danger linko result-hide">Defeat</h2>
                                 }
                             </div>
                             <div>
@@ -192,12 +208,13 @@ const Match = (account) => {
                         </Col>
 
                         <Col xs="3">
-                            <img src={items[1].image_url} width="300" className="dragon-hide"></img>
+                            <img src={items[1].image_url} width="300"></img>
                             <div className='d-grid'>
+                                <br/>
                                 {match.winner === 2 ?
-                                <h2 className="text-success linko result-hide">Win</h2>
+                                <h2 className="text-success linko result-hide">Victory</h2>
                                 :
-                                <h2 className="text-danger linko result-hide">Lose</h2>
+                                <h2 className="text-danger linko result-hide">Defeat</h2>
                                 }
                             </div>
                             <div>
