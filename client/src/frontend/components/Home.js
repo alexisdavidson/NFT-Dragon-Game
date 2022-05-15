@@ -159,40 +159,45 @@ const Home = ({ account }) => {
                         <h2>No listed assets for {account}</h2>
                     </main>
                 )}
-                <Row>
-                    <h2>Match History</h2>
-                    <table className="table table-bordered table-striped table-dark">
-                        <thead>
-                            <tr>
-                                <th scope="col">Replay</th>
-                                <th scope="col">Result</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Opponent</th>
-                                <th scope="col">Your Dragon</th>
-                                <th scope="col">Opponent's Dragon</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {matchHistory.map((val) => {
-                                return (
-                                    <tr>
-                                        <td>
-                                            <Button className="py-0" variant="secondary" size="sm" onClick={() => submitWatchBattle(val.id)}>
-                                                Replay
-                                            </Button>
-                                        </td>
-                                        <th scope="row">{val.wallet1 == account ? (val.winner == 1 ? <b className="text-success">Victory!</b> : <span className="text-danger">Defeat</span>) 
-                                            : (val.winner == 2 ? <b className="text-success">Victory!</b> : <span className="text-danger">Defeat</span>)}</th>
-                                        <td>{moment(val.date_played).format('MM/DD/YYYY hh:mm')}</td>
-                                        <td>{val.wallet1 == account ? val.wallet2 : val.wallet1}</td>
-                                        <td>{val.wallet1 == account ? val.dragon1 : val.dragon2}</td>
-                                        <td>{val.wallet1 == account ? val.dragon2 : val.dragon1}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </Row>
+                
+                {matchHistory.length > 0 ?
+                    <Row>
+                        <h2>Match History</h2>
+                        <table className="table table-bordered table-striped table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Replay</th>
+                                    <th scope="col">Result</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Opponent</th>
+                                    <th scope="col">Your Dragon</th>
+                                    <th scope="col">Opponent's Dragon</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {matchHistory.map((val) => {
+                                    return (
+                                        <tr>
+                                            <td>
+                                                <Button className="py-0" variant="secondary" size="sm" onClick={() => submitWatchBattle(val.id)}>
+                                                    Replay
+                                                </Button>
+                                            </td>
+                                            <th scope="row">{val.wallet1 == account ? (val.winner == 1 ? <b className="text-success">Victory!</b> : <span className="text-danger">Defeat</span>) 
+                                                : (val.winner == 2 ? <b className="text-success">Victory!</b> : <span className="text-danger">Defeat</span>)}</th>
+                                            <td>{moment(val.date_played).format('MM/DD/YYYY hh:mm')}</td>
+                                            <td>{val.wallet1 == account ? val.wallet2 : val.wallet1}</td>
+                                            <td>{val.wallet1 == account ? val.dragon1 : val.dragon2}</td>
+                                            <td>{val.wallet1 == account ? val.dragon2 : val.dragon1}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </Row>
+                : 
+                    <div></div>
+                }
             </div>
         </div>
     );
