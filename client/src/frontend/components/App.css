@@ -24,6 +24,10 @@ h2 {
   opacity: 0;
 }
 
+.linko.dragon-hide {
+  opacity: 0;
+}
+
 .linko.linko-show {
   opacity: 1;
 }

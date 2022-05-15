@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Row, Col, Card, Button } from 'react-bootstrap'
+import { Row, Col, Card } from 'react-bootstrap'
 import {useLocation} from 'react-router-dom';
 import Axios from 'axios'
+import attackIcon from '../images/attack.png'
+import defenseIcon from '../images/defense.png'
+import luckIcon from '../images/luck.png'
 
 const Match = (account) => {
     const [match, setMatch] = useState([])
@@ -31,7 +34,7 @@ const Match = (account) => {
           return null
         })
 
-        if (dragon2.owner.account == account) playedDragonId = 2
+        if (dragon2.owner.account === account) playedDragonId = 2
 
         let items = []
         items.push(dragon1)
@@ -43,14 +46,14 @@ const Match = (account) => {
 
     const attackText = (dragonId) => {
         // console.log("dragonId: " + dragonId + ", playerDragonId: " + playedDragonId)
-        if (dragonId == playedDragonId)
+        if (dragonId === playedDragonId)
             return "You attack"
         else return "Opponent attacks"
     }
 
     const goFirstText = (dragonId) => {
         // console.log("dragonId: " + dragonId + ", playerDragonId: " + playedDragonId)
-        if (dragonId == playedDragonId)
+        if (dragonId === playedDragonId)
             return "You go first!"
         else return "Opponent goes first!"
     }
@@ -59,7 +62,7 @@ const Match = (account) => {
         let battle_log = JSON.parse(match.battle_log)
         let lastDragonAttacking = battle_log[battle_log.length - 1].dragon
 
-        if (lastDragonAttacking == playedDragonId)
+        if (lastDragonAttacking === playedDragonId)
             return "You have defeated the opponent!"
         else return "You have been defeated."
     }
@@ -68,7 +71,7 @@ const Match = (account) => {
         let battle_log = JSON.parse(match.battle_log)
         let lastDragonAttacking = battle_log[battle_log.length - 1].dragon
 
-        if (lastDragonAttacking == playedDragonId)
+        if (lastDragonAttacking === playedDragonId)
             return "Victory!"
         else return "Defeat."
     }
@@ -85,6 +88,13 @@ const Match = (account) => {
 
             console.log("Match winner is " + response.data[0].winner)
             loadOpenSeaItems(response.data[0])
+
+            // var elementResult = document.querySelector('.dragon-hide');
+            // elementResult.classList.remove('dragon-hide');
+            // elementResult.classList.add('linko-show');
+            // elementResult = document.querySelector('.dragon-hide');
+            // elementResult.classList.remove('dragon-hide');
+            // elementResult.classList.add('linko-show');
         })
     }
 
@@ -95,11 +105,13 @@ const Match = (account) => {
           if (null === element) {
                 clearInterval(loop);
                 var elementResult = document.querySelector('.result-hide');
-                elementResult.classList.remove('result-hide');
-                elementResult.classList.add('linko-show');
-                elementResult = document.querySelector('.result-hide');
-                elementResult.classList.remove('result-hide');
-                elementResult.classList.add('linko-show');
+                if (elementResult != null) {
+                    elementResult.classList.remove('result-hide');
+                    elementResult.classList.add('linko-show');
+                    elementResult = document.querySelector('.result-hide');
+                    elementResult.classList.remove('result-hide');
+                    elementResult.classList.add('linko-show');
+                }
             } else {
                 element.classList.remove('linko-hide');
                 element.classList.add('linko-show');
@@ -128,36 +140,38 @@ const Match = (account) => {
         <div className="flex justify-center">
             {items.length > 0 ?
                 <div className="px-5 container">
-                    <h2>Fight!</h2>
+                    <Row>
+                        <Col xs="3">
+                            <p className="py-3">
+                                {items[0].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
+                                {items[0].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
+                                {items[0].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
+                            </p>
+                        </Col>
+                        <Col><h2>Fight!</h2></Col>
+                        <Col xs="3">
+                            <p className="py-3">
+                                {items[1].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
+                                {items[1].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
+                                {items[1].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
+                            </p>
+                        </Col>
+                    </Row>
                     {/* <p>Winner of match {location.state.matchId} is: {match.winner}</p> */}
                     {/* <p>Battle log: {match.battle_log}</p> */}
                     <Row>
                         <Col xs="3">
-                            <Card bg="dark">
-                                <Card.Img variant="top" src={items[0].image_url} />
-                                <Card.Body color="secondary">
-                                <Card.Title>{items[0].name}</Card.Title>
-                                <Card.Text>
-                                    {items[0].owner.address}
-                                    <br/>
-                                    <br/>
-                                    Attack: {items[0].traits.filter(e => e.trait_type == "Attack")[0].value}
-                                    <br/>
-                                    Defense: {items[0].traits.filter(e => e.trait_type == "Defense")[0].value}
-                                    <br/>
-                                    Luck: {items[0].traits.filter(e => e.trait_type == "Luck")[0].value}
-                                </Card.Text>
-                                </Card.Body>
-                                <Card.Footer>
-                                <div className='d-grid'>
-                                    {match.winner == 1 ?
-                                    <h2 className="text-success linko result-hide">Win</h2>
-                                    :
-                                    <h2 className="text-danger linko result-hide">Lose</h2>
-                                    }
-                                </div>
-                                </Card.Footer>
-                            </Card>
+                            <img src={items[0].image_url} width="300" className="dragon-hide"></img>
+                            <div className='d-grid'>
+                                {match.winner === 1 ?
+                                <h2 className="text-success linko result-hide">Win</h2>
+                                :
+                                <h2 className="text-danger linko result-hide">Lose</h2>
+                                }
+                            </div>
+                            <div>
+                                <span className="text-dark">{match.wallet1}</span>
+                            </div>
                         </Col>
                         
                         <Col xs="1"></Col>
@@ -178,31 +192,17 @@ const Match = (account) => {
                         </Col>
 
                         <Col xs="3">
-                            <Card bg="dark">
-                                <Card.Img variant="top" src={items[1].image_url} />
-                                <Card.Body color="secondary">
-                                <Card.Title>{items[1].name}</Card.Title>
-                                <Card.Text>
-                                    {items[1].owner.address}
-                                    <br/>
-                                    <br/>
-                                    Attack: {items[1].traits.filter(e => e.trait_type == "Attack")[0].value}
-                                    <br/>
-                                    Defense: {items[1].traits.filter(e => e.trait_type == "Defense")[0].value}
-                                    <br/>
-                                    Luck: {items[1].traits.filter(e => e.trait_type == "Luck")[0].value}
-                                </Card.Text>
-                                </Card.Body>
-                                <Card.Footer>
-                                <div className='d-grid'>
-                                    {match.winner == 2 ?
-                                    <h2 className="text-success linko result-hide">Win</h2>
-                                    :
-                                    <h2 className="text-danger linko result-hide">Lose</h2>
-                                    }
-                                </div>
-                                </Card.Footer>
-                            </Card>
+                            <img src={items[1].image_url} width="300" className="dragon-hide"></img>
+                            <div className='d-grid'>
+                                {match.winner === 2 ?
+                                <h2 className="text-success linko result-hide">Win</h2>
+                                :
+                                <h2 className="text-danger linko result-hide">Lose</h2>
+                                }
+                            </div>
+                            <div>
+                                <span className="text-dark">{match.wallet2}</span>
+                            </div>
                         </Col>
                     </Row>
                     {/* <Row>
