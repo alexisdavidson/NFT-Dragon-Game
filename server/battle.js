@@ -1,5 +1,16 @@
-import fetch from "node-fetch"
-import Axios from 'axios'
+// import fetch from "node-fetch"
+// import Axios from 'axios'
+import * as Web3 from 'web3'
+import { OpenSeaPort, Network } from 'opensea-js'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
+const seaport = new OpenSeaPort(provider, {
+  networkName: Network.Main,
+  apiKey: process.env.OPENSEAAPIKEY
+})
 
 export const battle = async function(dragonId1, dragonId2) {
     console.log("battle " + dragonId1 + " vs " + dragonId2)
@@ -35,7 +46,7 @@ export const battle = async function(dragonId1, dragonId2) {
     return battleLog
 }
 
-function fetchDragons(dragonId1, dragonId2) {
+async function fetchDragons(dragonId1, dragonId2) {
     let dragons = []
 
     // todo: actual api calls to opensea to retreive dragons metadata
@@ -127,6 +138,15 @@ function fetchDragons(dragonId1, dragonId2) {
             }
         ],
     })
+
+    const asset = await seaport.api.getAsset({
+        tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
+        tokenId: dragonId1
+    })
+
+    console.log("asset:")
+    console.log(asset)
+
     // await Axios.get(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${dragonId1}`, {
     //     params: {
     //     },
