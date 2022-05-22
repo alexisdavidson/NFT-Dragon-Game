@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
+import configData from "./configData.json";
 
 const MatchHistory = () => {
     let navigate = useNavigate(); 
@@ -18,7 +19,7 @@ const MatchHistory = () => {
     const [matchHistory, setMatchHistory] = useState([])
 
     const displayMatchHistory = async () => {
-        Axios.get('http://localhost:3001/api/get_match_history').then((response) => {
+        Axios.get(configData.SERVER_URL + 'api/get_match_history').then((response) => {
             setMatchHistory(response.data)
         })
     }

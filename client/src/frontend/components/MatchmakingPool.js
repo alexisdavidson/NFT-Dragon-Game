@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import Axios from 'axios'
+import configData from "./configData.json";
 
 const MatchmakingPool = () => {
     const [matchmakingPool, setMatchmakingPool] = useState([])
 
     const displayMatchmakingPool = async () => {
-        Axios.get('http://localhost:3001/api/get_matchmaking_pool').then((response) => {
+        Axios.get(configData.SERVER_URL + 'api/get_matchmaking_pool').then((response) => {
             setMatchmakingPool(response.data)
         })
     }

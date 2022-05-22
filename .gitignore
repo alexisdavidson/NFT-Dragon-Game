@@ -28,6 +28,8 @@ coverage
 coverage.json
 typechain
 
+client/src/frontend/components/configData.json
+
 #Hardhat files
 cache
 artifacts

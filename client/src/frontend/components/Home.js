@@ -3,6 +3,7 @@ import { Row, Col, Card, Button } from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
 import moment from 'moment'
+import configData from "./configData.json";
 
 const Home = ({ account }) => {
     let navigate = useNavigate(); 
@@ -30,7 +31,7 @@ const Home = ({ account }) => {
     const [matchHistory, setMatchHistory] = useState([])
 
     const displayMatchHistory = async () => {
-        Axios.get('http://localhost:3001/api/get_match_history', {
+        Axios.get(configData.SERVER_URL + 'api/get_match_history', {
             params: {
                 walletAddress: account
             },
@@ -47,7 +48,7 @@ const Home = ({ account }) => {
     const submitPick = (dragonId) => {
         console.log("Pick dragon " + dragonId);
         
-        Axios.get('http://localhost:3001/api/get_opponent', {
+        Axios.get(configData.SERVER_URL + 'api/get_opponent', {
             params: {
                 walletAddress: account,
                 dragonId: dragonId
@@ -56,7 +57,7 @@ const Home = ({ account }) => {
             if (response.data.length == 0) {
                 // No suitable opponent in matchmaking pool -> join the pool 
                 console.log("No opponent found. Joining matchmaking pool")
-                Axios.post('http://localhost:3001/api/join_matchmaking_pool', {
+                Axios.post(configData.SERVER_URL + 'api/join_matchmaking_pool', {
                     walletAddress: account,
                     dragonId: dragonId
                 }).then((response) => {
@@ -77,7 +78,7 @@ const Home = ({ account }) => {
                 
                 console.log("Opponent found. Starting match against " + response.data[0].dragon_id + ", " + response.data[0].wallet_address)
                 
-                Axios.post('http://localhost:3001/api/play_match', {
+                Axios.post(configData.SERVER_URL + 'api/play_match', {
                     walletAddress1: account,
                     dragonId1: dragonId,
                     walletAddress2: response.data[0].wallet_address,

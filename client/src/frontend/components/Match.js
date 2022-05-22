@@ -5,6 +5,7 @@ import Axios from 'axios'
 import attackIcon from '../images/attack.png'
 import defenseIcon from '../images/defense.png'
 import luckIcon from '../images/luck.png'
+import configData from "./configData.json";
 
 const Match = (account) => {
     const [match, setMatch] = useState([])
@@ -99,7 +100,7 @@ const Match = (account) => {
     const displayMatch = async () => {
         console.log("Display match " + location.state.matchId)
 
-        Axios.get('http://localhost:3001/api/get_match', {
+        Axios.get(configData.SERVER_URL + 'api/get_match', {
             params: {
                 matchId: location.state.matchId
             }
