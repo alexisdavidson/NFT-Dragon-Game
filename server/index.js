@@ -104,6 +104,11 @@ app.post('/api/play_match', async (req, res) => {
     const dragonId2 = req.body.dragonId2
 
     const battleLog = await battle(dragonId1, dragonId2)
+    if (battleLog == null) {
+        console.log("battleLog is null")
+        return;
+    }
+
     const winner = battleLog.winner
     delete battleLog["winner"]
     console.log("battleLog:")

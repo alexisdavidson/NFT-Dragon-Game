@@ -1,25 +1,25 @@
 // import fetch from "node-fetch"
 // import Axios from 'axios'
 import * as Web3 from 'web3'
-import { OpenSeaPort, Network } from 'opensea-js'
+// import { OpenSeaPort, Network } from 'opensea-js'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
-const seaport = new OpenSeaPort(provider, {
-  networkName: Network.Main,
-  apiKey: process.env.OPENSEAAPIKEY
-})
+// const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
+// const seaport = new OpenSeaPort(provider, {
+//   networkName: Network.Main,
+//   apiKey: process.env.OPENSEAAPIKEY
+// })
 
 export const battle = async function(dragonId1, dragonId2) {
     console.log("battle " + dragonId1 + " vs " + dragonId2)
 
-    let dragons = fetchDragons(dragonId1, dragonId2)
+    let dragons = await fetchDragons(dragonId1, dragonId2)
     if (dragons == null || dragons[0] == null || dragons[1] == null) return null
 
-    console.log(dragons[0])
-    console.log(dragons[1])
+    // console.log(dragons[0])
+    // console.log(dragons[1])
 
     let battleLog = []
     let dragonAttacking = Math.floor(Math.random() * 2)
@@ -139,13 +139,15 @@ async function fetchDragons(dragonId1, dragonId2) {
         ],
     })
 
-    const asset = await seaport.api.getAsset({
-        tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
-        tokenId: dragonId1
-    })
+    // const asset = await seaport.api.getAsset({
+    //     tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
+    //     tokenId: dragonId1
+    // })
 
-    console.log("asset:")
-    console.log(asset)
+    // console.log("asset:")
+    // console.log(asset)
+
+    // console.log("dragons: " + dragons)
 
     // await Axios.get(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${dragonId1}`, {
     //     params: {
@@ -181,6 +183,8 @@ async function fetchDragons(dragonId1, dragonId2) {
             Defense: dragons[i].traits.filter(e => e.trait_type == "Defense")[0].value
         })
     }
+
+    // console.log("dragonsSimplified: " + dragonsSimplified)
 
     return dragonsSimplified
 }
