@@ -38,6 +38,10 @@ app.get('/api/get_match_history', (req, res) => {
     let sqlSelect = "SELECT * FROM match_history"
 
     const walletAddress = req.query.walletAddress
+    const lettersAndNumbersPattern = /^[a-z0-9]+$/;
+    if(walletAddress != undefined && walletAddress != null && !walletAddress.match(lettersAndNumbersPattern))
+        return res.status(400).json({ err: "Invalid input. No special characters and no numbers, please!"})
+
     if (walletAddress != undefined && walletAddress != null) sqlSelect += " WHERE wallet1 = '" + walletAddress + "' OR wallet2 = '" + walletAddress + "'"
     sqlSelect += " ORDER BY id DESC"
     if (walletAddress != undefined && walletAddress != null) sqlSelect += " LIMIT 10"
@@ -56,6 +60,14 @@ app.get('/api/get_opponent', (req, res) => {
     const walletAddress = req.query.walletAddress
     const dragonId = req.query.dragonId
 
+    const lettersAndNumbersPattern = /^[a-z0-9]+$/;
+    if(walletAddress != undefined && walletAddress != null && !walletAddress.match(lettersAndNumbersPattern))
+        return res.status(400).json({ err: "Invalid input. walletAddress no special characters and no numbers, please!"})
+
+    const numbersPattern = /^[0-9]+$/;
+    if(dragonId != undefined && dragonId != null && !dragonId.match(numbersPattern))
+        return res.status(400).json({ err: "Invalid input. dragonId only numbers!"})
+
     let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address != ? AND dragon_id != ? LIMIT 1;"
     if (canFightOwnWallet === "TRUE") {
         sqlSelect = "SELECT * FROM matchmaking_pool WHERE dragon_id != ? AND dragon_id != ? LIMIT 1;"
@@ -72,6 +84,14 @@ app.get('/api/get_opponent', (req, res) => {
 app.post('/api/join_matchmaking_pool', (req, res) => {
     const walletAddress = req.body.walletAddress
     const dragonId = req.body.dragonId
+
+    const lettersAndNumbersPattern = /^[a-z0-9]+$/;
+    if(walletAddress != undefined && walletAddress != null && !walletAddress.match(lettersAndNumbersPattern))
+        return res.status(400).json({ err: "Invalid input. walletAddress no special characters and no numbers, please!"})
+
+    const numbersPattern = /^[0-9]+$/;
+    if(dragonId != undefined && dragonId != null && !dragonId.match(numbersPattern))
+        return res.status(400).json({ err: "Invalid input. dragonId only numbers!"})
 
     let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address = ? AND dragon_id = ? LIMIT 1;"
     
@@ -102,6 +122,18 @@ app.post('/api/play_match', async (req, res) => {
     const walletAddress2 = req.body.walletAddress2
     const dragonId1 = req.body.dragonId1
     const dragonId2 = req.body.dragonId2
+
+    const lettersAndNumbersPattern = /^[a-z0-9]+$/;
+    if(walletAddress1 != undefined && walletAddress1 != null && !walletAddress1.match(lettersAndNumbersPattern))
+        return res.status(400).json({ err: "Invalid input. walletAddress1 no special characters and no numbers, please!"})
+    if(walletAddress2 != undefined && walletAddress2 != null && !walletAddress2.match(lettersAndNumbersPattern))
+        return res.status(400).json({ err: "Invalid input. walletAddress2 no special characters and no numbers, please!"})
+
+    const numbersPattern = /^[0-9]+$/;
+    if(dragonId1 != undefined && dragonId1 != null && !dragonId1.match(numbersPattern))
+        return res.status(400).json({ err: "Invalid input. dragonId1 only numbers!"})
+    if(dragonId2 != undefined && dragonId2 != null && !dragonId2.match(numbersPattern))
+        return res.status(400).json({ err: "Invalid input. dragonId2 only numbers!"})
 
     const battleLog = await battle(dragonId1, dragonId2)
     if (battleLog == null) {
@@ -134,6 +166,10 @@ app.post('/api/play_match', async (req, res) => {
 
 app.get('/api/get_match', (req, res) => {
     const matchId = req.query.matchId
+
+    const numbersPattern = /^[0-9]+$/;
+    if(matchId != undefined && matchId != null && !matchId.match(numbersPattern))
+        return res.status(400).json({ err: "Invalid input. matchId only numbers!"})
 
     console.log("Get Match " + matchId)
 

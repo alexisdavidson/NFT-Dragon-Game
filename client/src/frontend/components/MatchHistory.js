@@ -22,6 +22,10 @@ const MatchHistory = () => {
         Axios.get(configData.SERVER_URL + 'api/get_match_history').then((response) => {
             setMatchHistory(response.data)
         })
+        .catch((error) => {
+            console.log(error);
+            console.log(error.response);
+        })
     }
     const submitWatchBattle = (matchId) => {
         console.log("Watch battle of match id " + matchId)
