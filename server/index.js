@@ -147,6 +147,6 @@ app.get('/api/get_match', (req, res) => {
     })
 })
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, process.env.IP, () => {
     console.log('Running on port ' + process.env.PORT)
 })
