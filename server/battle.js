@@ -1,16 +1,16 @@
-// import fetch from "node-fetch"
-// import Axios from 'axios'
-import * as Web3 from 'web3'
-// import { OpenSeaPort, Network } from 'opensea-js'
+import Web3 from 'web3'
+import OpenSea from 'opensea-js'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-// const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
-// const seaport = new OpenSeaPort(provider, {
-//   networkName: Network.Main,
-//   apiKey: process.env.OPENSEAAPIKEY
-// })
+const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
+
+const seaport = new OpenSea.OpenSeaPort(provider, {
+  networkName: OpenSea.Network.Main,
+  apiKey: process.env.OPENSEAAPIKEY
+})
+
 
 export const battle = async function(dragonId1, dragonId2) {
     console.log("battle " + dragonId1 + " vs " + dragonId2)
@@ -49,100 +49,104 @@ export const battle = async function(dragonId1, dragonId2) {
 async function fetchDragons(dragonId1, dragonId2) {
     let dragons = []
 
-    // todo: actual api calls to opensea to retreive dragons metadata
-    dragons.push({
-        "traits": [
-            {
-                "trait_type": "Breed",
-                "value": "Green",
-                "display_type": null,
-                "max_value": null,
-                "trait_count": 298,
-                "order": null
-            },
-            {
-                "trait_type": "Rarity",
-                "value": "Common",
-                "display_type": null,
-                "max_value": null,
-                "trait_count": 498,
-                "order": null
-            },
-            {
-                "trait_type": "Defense",
-                "value": 8,
-                "display_type": "number",
-                "max_value": null,
-                "trait_count": 106,
-                "order": null
-            },
-            {
-                "trait_type": "Luck",
-                "value": 2,
-                "display_type": "number",
-                "max_value": null,
-                "trait_count": 98,
-                "order": null
-            },
-            {
-                "trait_type": "Attack",
-                "value": 10,
-                "display_type": "number",
-                "max_value": null,
-                "trait_count": 107,
-                "order": null
-            }
-        ],
-    })
-    dragons.push({
-        "traits": [
-            {
-                "trait_type": "Breed",
-                "value": "Grey",
-                "display_type": null,
-                "max_value": null,
-                "trait_count": 600,
-                "order": null
-            },
-            {
-                "trait_type": "Rarity",
-                "value": "Rare",
-                "display_type": null,
-                "max_value": null,
-                "trait_count": 335,
-                "order": null
-            },
-            {
-                "trait_type": "Luck",
-                "value": 2,
-                "display_type": "number",
-                "max_value": null,
-                "trait_count": 98,
-                "order": null
-            },
-            {
-                "trait_type": "Attack",
-                "value": 10,
-                "display_type": "number",
-                "max_value": null,
-                "trait_count": 107,
-                "order": null
-            },
-            {
-                "trait_type": "Defense",
-                "value": 1,
-                "display_type": "number",
-                "max_value": null,
-                "trait_count": 88,
-                "order": null
-            }
-        ],
-    })
-
-    // const asset = await seaport.api.getAsset({
-    //     tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
-    //     tokenId: dragonId1
+    // dragons.push({
+    //     "traits": [
+    //         {
+    //             "trait_type": "Breed",
+    //             "value": "Green",
+    //             "display_type": null,
+    //             "max_value": null,
+    //             "trait_count": 298,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Rarity",
+    //             "value": "Common",
+    //             "display_type": null,
+    //             "max_value": null,
+    //             "trait_count": 498,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Defense",
+    //             "value": 8,
+    //             "display_type": "number",
+    //             "max_value": null,
+    //             "trait_count": 106,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Luck",
+    //             "value": 2,
+    //             "display_type": "number",
+    //             "max_value": null,
+    //             "trait_count": 98,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Attack",
+    //             "value": 10,
+    //             "display_type": "number",
+    //             "max_value": null,
+    //             "trait_count": 107,
+    //             "order": null
+    //         }
+    //     ],
     // })
+    // dragons.push({
+    //     "traits": [
+    //         {
+    //             "trait_type": "Breed",
+    //             "value": "Grey",
+    //             "display_type": null,
+    //             "max_value": null,
+    //             "trait_count": 600,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Rarity",
+    //             "value": "Rare",
+    //             "display_type": null,
+    //             "max_value": null,
+    //             "trait_count": 335,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Luck",
+    //             "value": 2,
+    //             "display_type": "number",
+    //             "max_value": null,
+    //             "trait_count": 98,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Attack",
+    //             "value": 10,
+    //             "display_type": "number",
+    //             "max_value": null,
+    //             "trait_count": 107,
+    //             "order": null
+    //         },
+    //         {
+    //             "trait_type": "Defense",
+    //             "value": 1,
+    //             "display_type": "number",
+    //             "max_value": null,
+    //             "trait_count": 88,
+    //             "order": null
+    //         }
+    //     ],
+    // })
+
+    dragons.push(await seaport.api.getAsset({
+        tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
+        tokenId: dragonId1
+    }))
+
+    dragons.push(await seaport.api.getAsset({
+        tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
+        tokenId: dragonId2
+    }))
 
     // console.log("asset:")
     // console.log(asset)
@@ -185,6 +189,8 @@ async function fetchDragons(dragonId1, dragonId2) {
     }
 
     // console.log("dragonsSimplified: " + dragonsSimplified)
+    console.log("dragonsSimplified[0]: " + JSON.stringify(dragonsSimplified[0]))
+    console.log("dragonsSimplified[1]: " + JSON.stringify(dragonsSimplified[1]))
 
     return dragonsSimplified
 }
