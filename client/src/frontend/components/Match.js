@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col, ProgressBar } from 'react-bootstrap'
 import {useLocation} from 'react-router-dom';
 import Axios from 'axios'
 import attackIcon from '../images/attack.png'
@@ -12,13 +12,15 @@ const Match = (account) => {
     const [loading, setLoading] = useState(true)
     const location = useLocation();
     const [items, setItems] = useState([])
+    const [matchLength, setMatchLength] = useState([])
+    const [matchInitiated, setMatchInitiated] = useState(false)
+    const [intervalId, setIntervalId] = useState(0)
 
     const playedDragonId = 1
     let dragonNoflip = null
     let dragonFlip = null
     let displayOffset = 2
     let currentActiveDragon = 1
-    let matchLength = 0
     let elementsShown = 0
 
     const typeToHealth = (breed) => {
@@ -73,7 +75,7 @@ const Match = (account) => {
         setLoading(false)
         setItems(items)
         
-        matchLength = JSON.parse(match.battle_log).length
+        setMatchLength(JSON.parse(match.battle_log).length)
         currentActiveDragon = JSON.parse(match.battle_log)[0].dragon
     }
 
@@ -139,6 +141,7 @@ const Match = (account) => {
         dragonFlip = document.querySelector('.dragon-flip');
         dragonNoflip = document.querySelector('.dragon-noflip');
 
+        // console.log("startBattleEventAnimation")
         // console.log(currentActiveDragon)
         // console.log(dragonFlip)
         // console.log(dragonNoflip)
@@ -167,25 +170,28 @@ const Match = (account) => {
 
                 let dragonGlow = document.querySelector('.dragon-glow');
                 if (dragonGlow != null) dragonGlow.classList.remove('dragon-glow')
-        
+
                 if (currentActiveDragon == 1) {
                     dragonFlip.classList.add('dragon-glow');
-                    // remove hp
-                    console.log("items[1]: " + items[1])
-                    console.log(items[1])
-                    console.log("items[1].Health: " + items[1].Health)
-                    items[1].Health -= 5;
                 }
                 else {
                     dragonNoflip.classList.add('dragon-glow');
-                    // remove hp
-                    console.log("items[0]: " + items[0])
-                    console.log(items[0])
-                    console.log("items[0].Health: " + items[0].Health)
-                    items[0].Health -= 5;
                 }
             }
         }, 1200);
+    }
+
+    const damageDragon = (dragonId) => {
+        setTimeout(function(){
+            let attackValue = JSON.parse(match.battle_log)[elementsShown - displayOffset - 1].attackValue
+            console.log("attackValue: " + attackValue)
+            
+            items[dragonId].Health -= attackValue
+            if (items[dragonId].Health < 0) items[dragonId].Health = 0
+            console.log("Dragon " + dragonId + ": " + items[dragonId].Health)
+
+            setItems([...items])
+        }, 300);
     }
 
     const createIntervalLoop = () => {
@@ -205,8 +211,15 @@ const Match = (account) => {
                 element.classList.remove('linko-hide');
                 element.classList.add('linko-show');
 
+                // console.log("element != null")
+                // console.log("elementsShown: " + elementsShown)
+                // console.log("displayOffset: " + displayOffset)
+                // console.log("matchLength: " + matchLength)
+
                 if (elementsShown >= displayOffset && elementsShown - displayOffset < matchLength) {
+                    // console.log("Call startBattleEventAnimation")
                     startBattleEventAnimation()
+                    damageDragon(currentActiveDragon - 1)
                 }
 
                 elementsShown += 1
@@ -221,12 +234,27 @@ const Match = (account) => {
 
     useEffect(() => {
         displayMatch()
-        let intervalId = createIntervalLoop()
         
-        return(() => {
-            clearInterval(intervalId)
-        })
+        // return(() => {
+        //     clearInterval(intervalId)
+        // })
     }, [])
+
+    useEffect(() => {
+        if (!(matchInitiated === true) && items.length > 0 && matchLength > 0 && match != null && match != undefined) {
+            console.log("items updated.")
+            console.log(items)
+
+            let intervalIdTemp = createIntervalLoop()
+            setIntervalId(intervalIdTemp)
+
+            setMatchInitiated(true)
+            
+            // return(() => {
+            //     clearInterval(intervalIdTemp)
+            // })
+        }
+    }, [items, match, matchLength]);
 
     if (loading) return (
         <div className="flex justify-center">
@@ -260,7 +288,10 @@ const Match = (account) => {
                     <Row>
                         <Col xs="3">
                             <img src={items[0].ImageUrl} width="300" className="dragon-flip dragon-glow"></img>
-                            <div className='d-grid'>{items[0].Health} / {items[0].HealthMax}</div>
+                            <Row>
+                                <ProgressBar style={{marginTop: "40px", height:"40px", width:"100%", backgroundColor: "black", fontSize: "18px"}}
+                                variant="danger" now={100 * items[0].Health / items[0].HealthMax} label={items[0].Health + '/' + items[0].HealthMax} />
+                            </Row>
                             <div className='d-grid'>
                                 <br/>
                                 {match.winner === 1 ?
@@ -293,7 +324,10 @@ const Match = (account) => {
 
                         <Col xs="3">
                             <img src={items[1].ImageUrl} width="300" className="dragon-noflip"></img>
-                            <div className='d-grid'>{items[1].Health} / {items[1].HealthMax}</div>
+                            <Row>
+                                <ProgressBar style={{marginTop: "40px", height:"40px", width:"100%", backgroundColor: "black", fontSize: "18px"}}
+                                variant="danger" now={100 * items[1].Health / items[1].HealthMax} label={items[1].Health + '/' + items[1].HealthMax} />
+                            </Row>
                             <div className='d-grid'>
                                 <br/>
                                 {match.winner === 2 ?
