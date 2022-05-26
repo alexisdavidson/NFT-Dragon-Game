@@ -12,7 +12,6 @@ const Match = (account) => {
     const [loading, setLoading] = useState(true)
     const location = useLocation();
     const [items, setItems] = useState([])
-    let [loop, setLoop] = useState([])
 
     const playedDragonId = 1
     let dragonNoflip = null
@@ -22,30 +21,54 @@ const Match = (account) => {
     let matchLength = 0
     let elementsShown = 0
 
+    const typeToHealth = (breed) => {
+        if (breed == "Green") {
+            return 55
+        }
+        if (breed == "Gold") {
+            return 60
+        }
+        if (breed == "Red") {
+            return 70
+        }
+        
+        return 50
+    }
+
     const loadOpenSeaItems = async (match) => {
-        let dragon1 = await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon1}`)
+
+        let dragons = []
+        dragons.push(await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon1}`)
         .then((res) => res.json())
         .then((res) => { return res })
         .catch((e) => {
           console.error(e)
           console.error('Could not talk to OpenSea')
           return null
-        })
+        }))
 
-        let dragon2 = await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon2}`)
+        dragons.push(await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon2}`)
         .then((res) => res.json())
         .then((res) => { return res })
         .catch((e) => {
           console.error(e)
           console.error('Could not talk to OpenSea')
           return null
-        })
+        }))
 
-        if (dragon2.owner.account === account) playedDragonId = 2
+        if (dragons[1].owner.account === account) playedDragonId = 2
 
         let items = []
-        items.push(dragon1)
-        items.push(dragon2)
+        for(let i = 0; i < dragons.length; i ++) {
+            items.push({
+                ImageUrl: dragons[i].image_url,
+                Health: typeToHealth(dragons[i].traits.filter(e => e.trait_type == "Breed")[0].value),
+                HealthMax: typeToHealth(dragons[i].traits.filter(e => e.trait_type == "Breed")[0].value),
+                Attack: dragons[i].traits.filter(e => e.trait_type == "Attack")[0].value,
+                Luck: dragons[i].traits.filter(e => e.trait_type == "Luck")[0].value,
+                Defense: dragons[i].traits.filter(e => e.trait_type == "Defense")[0].value
+            })
+        }
 
         setLoading(false)
         setItems(items)
@@ -54,16 +77,16 @@ const Match = (account) => {
         currentActiveDragon = JSON.parse(match.battle_log)[0].dragon
     }
 
-    const showDragons = () => {
-        var elementResult = document.querySelector('.dragon-hide');
-        if (elementResult != null) {
-            elementResult.classList.remove('dragon-hide');
-            elementResult.classList.add('linko-show');
-            elementResult = document.querySelector('.dragon-hide');
-            elementResult.classList.remove('dragon-hide');
-            elementResult.classList.add('linko-show');
-        }
-    }
+    // const showDragons = () => {
+    //     var elementResult = document.querySelector('.dragon-hide');
+    //     if (elementResult != null) {
+    //         elementResult.classList.remove('dragon-hide');
+    //         elementResult.classList.add('linko-show');
+    //         elementResult = document.querySelector('.dragon-hide');
+    //         elementResult.classList.remove('dragon-hide');
+    //         elementResult.classList.add('linko-show');
+    //     }
+    // }
 
     const attackText = (dragonId) => {
         // console.log("dragonId: " + dragonId + ", playerDragonId: " + playedDragonId)
@@ -147,9 +170,19 @@ const Match = (account) => {
         
                 if (currentActiveDragon == 1) {
                     dragonFlip.classList.add('dragon-glow');
+                    // remove hp
+                    console.log("items[1]: " + items[1])
+                    console.log(items[1])
+                    console.log("items[1].Health: " + items[1].Health)
+                    items[1].Health -= 5;
                 }
                 else {
                     dragonNoflip.classList.add('dragon-glow');
+                    // remove hp
+                    console.log("items[0]: " + items[0])
+                    console.log(items[0])
+                    console.log("items[0].Health: " + items[0].Health)
+                    items[0].Health -= 5;
                 }
             }
         }, 1200);
@@ -160,7 +193,6 @@ const Match = (account) => {
             var element = document.querySelector('.linko-hide');
           
             if (null === element) {
-                clearInterval(loop);
                 var elementResult = document.querySelector('.result-hide');
                 if (elementResult != null) {
                     elementResult.classList.remove('result-hide');
@@ -181,16 +213,19 @@ const Match = (account) => {
             }
           }
           
-          setLoop(setInterval(function () {
-              displayText();
-          }, 3000));
+          return setInterval(function () {
+                displayText();
+            }, 3000)
     }
 
 
     useEffect(() => {
-        if (loop != null) clearInterval(loop);
         displayMatch()
-        createIntervalLoop()
+        let intervalId = createIntervalLoop()
+        
+        return(() => {
+            clearInterval(intervalId)
+        })
     }, [])
 
     if (loading) return (
@@ -206,17 +241,17 @@ const Match = (account) => {
                     <Row>
                         <Col xs="3">
                             <p className="py-3">
-                                {items[0].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
-                                {items[0].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
-                                {items[0].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
+                                {items[0].Attack} <img src={attackIcon} width="40"></img>
+                                {items[0].Defense} <img src={defenseIcon} width="40"></img>
+                                {items[0].Luck} <img src={luckIcon} width="40"></img>
                             </p>
                         </Col>
                         <Col><h2>Fight!</h2></Col>
                         <Col xs="3">
                             <p className="py-3">
-                                {items[1].traits.filter(e => e.trait_type === "Attack")[0].value} <img src={attackIcon} width="40"></img>
-                                {items[1].traits.filter(e => e.trait_type === "Defense")[0].value} <img src={defenseIcon} width="40"></img>
-                                {items[1].traits.filter(e => e.trait_type === "Luck")[0].value} <img src={luckIcon} width="40"></img>
+                                {items[1].Attack} <img src={attackIcon} width="40"></img>
+                                {items[1].Defense} <img src={defenseIcon} width="40"></img>
+                                {items[1].Luck} <img src={luckIcon} width="40"></img>
                             </p>
                         </Col>
                     </Row>
@@ -224,7 +259,8 @@ const Match = (account) => {
                     {/* <p>Battle log: {match.battle_log}</p> */}
                     <Row>
                         <Col xs="3">
-                            <img src={items[0].image_url} width="300" className="dragon-flip dragon-glow"></img>
+                            <img src={items[0].ImageUrl} width="300" className="dragon-flip dragon-glow"></img>
+                            <div className='d-grid'>{items[0].Health} / {items[0].HealthMax}</div>
                             <div className='d-grid'>
                                 <br/>
                                 {match.winner === 1 ?
@@ -256,7 +292,8 @@ const Match = (account) => {
                         </Col>
 
                         <Col xs="3">
-                            <img src={items[1].image_url} width="300" className="dragon-noflip"></img>
+                            <img src={items[1].ImageUrl} width="300" className="dragon-noflip"></img>
+                            <div className='d-grid'>{items[1].Health} / {items[1].HealthMax}</div>
                             <div className='d-grid'>
                                 <br/>
                                 {match.winner === 2 ?
