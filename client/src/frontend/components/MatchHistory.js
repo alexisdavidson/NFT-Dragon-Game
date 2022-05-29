@@ -53,7 +53,7 @@ const MatchHistory = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {matchHistory.map((val) => {
+                    {matchHistory != null && matchHistory.length > 0 ? matchHistory.map((val) => {
                         return (
                             <tr>
                                 <td>
@@ -70,7 +70,9 @@ const MatchHistory = () => {
                                 <td>{val.date_played}</td>
                             </tr>
                         );
-                    })}
+                    })
+                    : <span />
+                }
                 </tbody>
             </table>
         </div>
