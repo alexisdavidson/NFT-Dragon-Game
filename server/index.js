@@ -65,7 +65,7 @@ app.get('/api/get_opponent', (req, res) => {
         return res.status(400).json({ err: "Invalid input. walletAddress no special characters and no numbers, please!"})
 
     const numbersPattern = /^[0-9]+$/;
-    if(dragonId != undefined && dragonId != null && !dragonId.match(numbersPattern))
+    if(dragonId != undefined && dragonId != null && !dragonId.toString().match(numbersPattern))
         return res.status(400).json({ err: "Invalid input. dragonId only numbers!"})
 
     let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address != ? AND dragon_id != ? LIMIT 1;"
@@ -90,7 +90,7 @@ app.post('/api/join_matchmaking_pool', (req, res) => {
         return res.status(400).json({ err: "Invalid input. walletAddress no special characters and no numbers, please!"})
 
     const numbersPattern = /^[0-9]+$/;
-    if(dragonId != undefined && dragonId != null && !dragonId.match(numbersPattern))
+    if(dragonId != undefined && dragonId != null && !dragonId.toString().match(numbersPattern))
         return res.status(400).json({ err: "Invalid input. dragonId only numbers!"})
 
     let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address = ? AND dragon_id = ? LIMIT 1;"
@@ -131,9 +131,9 @@ app.post('/api/play_match', async (req, res) => {
         return res.status(400).json({ err: "Invalid input. walletAddress2 no special characters and no numbers, please!"})
 
     const numbersPattern = /^[0-9]+$/;
-    if(dragonId1 != undefined && dragonId1 != null && !dragonId1.match(numbersPattern))
+    if(dragonId1 != undefined && dragonId1 != null && !dragonId1.toString().match(numbersPattern))
         return res.status(400).json({ err: "Invalid input. dragonId1 only numbers!"})
-    if(dragonId2 != undefined && dragonId2 != null && !dragonId2.match(numbersPattern))
+    if(dragonId2 != undefined && dragonId2 != null && !dragonId2.toString().match(numbersPattern))
         return res.status(400).json({ err: "Invalid input. dragonId2 only numbers!"})
 
     const battleLog = await battle(dragonId1, dragonId2)
@@ -169,7 +169,7 @@ app.get('/api/get_match', (req, res) => {
     const matchId = req.query.matchId
 
     const numbersPattern = /^[0-9]+$/;
-    if(matchId != undefined && matchId != null && !matchId.match(numbersPattern))
+    if(matchId != undefined && matchId != null && !matchId.toString().match(numbersPattern))
         return res.status(400).json({ err: "Invalid input. matchId only numbers!"})
 
     console.log("Get Match " + matchId)
