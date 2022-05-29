@@ -122,6 +122,7 @@ app.post('/api/play_match', async (req, res) => {
     const walletAddress2 = req.body.walletAddress2
     const dragonId1 = req.body.dragonId1
     const dragonId2 = req.body.dragonId2
+    console.log("Call play match " + walletAddress1 + " (" + dragonId1 + ") vs " + walletAddress2 + " (" + dragonId2 + ")")
 
     const lettersAndNumbersPattern = /^[a-z0-9]+$/;
     if(walletAddress1 != undefined && walletAddress1 != null && !walletAddress1.match(lettersAndNumbersPattern))
