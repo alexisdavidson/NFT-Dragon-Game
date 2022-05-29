@@ -231,13 +231,17 @@ const Match = (account) => {
             }, 3000)
     }
 
+    const clearAllIntervals = () => {
+        const interval_id = setInterval(function(){}, Number.MAX_SAFE_INTEGER);
+        for (let i = 1; i < interval_id; i++) {
+            clearInterval(i);
+        }
+    }
+
 
     useEffect(() => {
+        clearAllIntervals()
         displayMatch()
-        
-        // return(() => {
-        //     clearInterval(intervalId)
-        // })
     }, [])
 
     useEffect(() => {
@@ -249,10 +253,6 @@ const Match = (account) => {
             setIntervalId(intervalIdTemp)
 
             setMatchInitiated(true)
-            
-            // return(() => {
-            //     clearInterval(intervalIdTemp)
-            // })
         }
     }, [items, match, matchLength]);
 
