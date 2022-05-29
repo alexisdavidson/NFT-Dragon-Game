@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Row, Col, Card, Button } from 'react-bootstrap'
+import { Row, Col, Card } from 'react-bootstrap'
 import {useLocation} from 'react-router-dom';
-import Axios from 'axios'
 import dice from '../images/Dice.PNG'
 
 const Matchmaking = () => {

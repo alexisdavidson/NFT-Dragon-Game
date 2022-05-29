@@ -14,7 +14,6 @@ const Match = (account) => {
     const [items, setItems] = useState([])
     const [matchLength, setMatchLength] = useState([])
     const [matchInitiated, setMatchInitiated] = useState(false)
-    const [intervalId, setIntervalId] = useState(0)
 
     const playedDragonId = 1
     let dragonNoflip = null
@@ -250,7 +249,6 @@ const Match = (account) => {
             console.log(items)
 
             let intervalIdTemp = createIntervalLoop()
-            setIntervalId(intervalIdTemp)
 
             setMatchInitiated(true)
         }
