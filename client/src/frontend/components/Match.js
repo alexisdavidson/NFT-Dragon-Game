@@ -14,12 +14,13 @@ const Match = (account) => {
     const [items, setItems] = useState([])
     const [matchLength, setMatchLength] = useState([])
     const [matchInitiated, setMatchInitiated] = useState(false)
+    const [startingDragon, setStartingDragon] = useState(0)
 
-    const playedDragonId = 1
+    let playedDragonId = 1
     let dragonNoflip = null
     let dragonFlip = null
+    let currentActiveDragon = 0
     let displayOffset = 2
-    let currentActiveDragon = 1
     let elementsShown = 0
 
     const typeToHealth = (breed) => {
@@ -36,8 +37,12 @@ const Match = (account) => {
         return 50
     }
 
-    const loadOpenSeaItems = async (match) => {
+    const setCurrentActiveDragon = (activeDragon) => {
+        console.log("setCurrentActiveDragon " + currentActiveDragon + " to " + activeDragon)
+        currentActiveDragon = activeDragon
+    }
 
+    const loadOpenSeaItems = async (match) => {
         let dragons = []
         dragons.push(await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${match.dragon1}`)
         .then((res) => res.json())
@@ -73,9 +78,6 @@ const Match = (account) => {
 
         setLoading(false)
         setItems(items)
-        
-        setMatchLength(JSON.parse(match.battle_log).length)
-        currentActiveDragon = JSON.parse(match.battle_log)[0].dragon
     }
 
     // const showDragons = () => {
@@ -129,23 +131,38 @@ const Match = (account) => {
                 matchId: location.state.matchId
             }
         }).then((response) => {
-            setMatch(response.data[0])
+            const matchTemp = response.data[0]
+            setMatch(matchTemp)
+            setMatchLength(JSON.parse(matchTemp.battle_log).length)
+            setStartingDragon(JSON.parse(matchTemp.battle_log)[0].dragon)
 
-            console.log("Match winner is " + response.data[0].winner)
-            loadOpenSeaItems(response.data[0])
+            console.log("matchTemp.battle_log[0].dragon: " + currentActiveDragon)
+            console.log("Match winner is " + matchTemp.winner)
+
+            loadOpenSeaItems(matchTemp)
         })
     }
 
-    const startBattleEventAnimation = () => {
-        dragonFlip = document.querySelector('.dragon-flip');
-        dragonNoflip = document.querySelector('.dragon-noflip');
+    const updateDragonGlow = () => {
+        console.log("updateDragonGlow, currentActiveDragon: " + currentActiveDragon)
+        let dragonGlow = document.querySelector('.dragon-glow');
+        if (dragonGlow != null) dragonGlow?.classList?.remove('dragon-glow')
 
+        if (currentActiveDragon === 1) {
+            dragonFlip.classList.add('dragon-glow');
+        }
+        else {
+            dragonNoflip.classList.add('dragon-glow');
+        }
+    }
+
+    const startBattleEventAnimation = () => {
         // console.log("startBattleEventAnimation")
         // console.log(currentActiveDragon)
         // console.log(dragonFlip)
         // console.log(dragonNoflip)
 
-        if (currentActiveDragon == 1) {
+        if (currentActiveDragon === 1) {
             dragonFlip.classList.add('dragon-flip-attack');
             dragonNoflip.classList.add('dragon-hurt');
         }
@@ -154,7 +171,7 @@ const Match = (account) => {
             dragonFlip.classList.add('dragon-flip-hurt');
         }
         
-        currentActiveDragon = 1 - (currentActiveDragon - 1) + 1
+        setCurrentActiveDragon(1 - (currentActiveDragon - 1) + 1)
 
         setTimeout(function(){
             if (elementsShown - displayOffset < matchLength) {
@@ -167,15 +184,7 @@ const Match = (account) => {
                 let dragonFlipHurt = document.querySelector('.dragon-flip-hurt')
                 if (dragonFlipHurt != null) dragonFlip.classList.remove('dragon-flip-hurt');
 
-                let dragonGlow = document.querySelector('.dragon-glow');
-                if (dragonGlow != null) dragonGlow.classList.remove('dragon-glow')
-
-                if (currentActiveDragon == 1) {
-                    dragonFlip.classList.add('dragon-glow');
-                }
-                else {
-                    dragonNoflip.classList.add('dragon-glow');
-                }
+                updateDragonGlow();
             }
         }, 1200);
     }
@@ -237,18 +246,23 @@ const Match = (account) => {
         }
     }
 
-
     useEffect(() => {
         clearAllIntervals()
         displayMatch()
     }, [])
 
     useEffect(() => {
-        if (!(matchInitiated === true) && items.length > 0 && matchLength > 0 && match != null && match != undefined) {
+        if (!(matchInitiated === true) && startingDragon != 0 && items.length > 0 && matchLength > 0 && match != null && match != undefined) {
             console.log("items updated.")
             console.log(items)
-
-            let intervalIdTemp = createIntervalLoop()
+            
+            setCurrentActiveDragon(startingDragon)
+            console.log("Dragon to start is " + currentActiveDragon)
+            dragonFlip = document.querySelector('.dragon-flip');
+            dragonNoflip = document.querySelector('.dragon-noflip');
+            updateDragonGlow()
+            
+            createIntervalLoop()
 
             setMatchInitiated(true)
         }
