@@ -28,6 +28,9 @@ export const battle = async function(dragonId1, dragonId2) {
         let isCriticalStrike = Math.floor(Math.random() * 100) < dragons[dragonAttacking].Luck * 5
         let attackValue = Math.floor(Math.random() * 20) + dragons[dragonAttacking].Attack + (isCriticalStrike ? 5 : 0)
         attackValue -= dragons[1 - dragonAttacking].Defense
+        if (attackValue < 0) {
+            attackValue = 0
+        }
 
         let battleAction = {
             dragon: dragonAttacking + 1,
