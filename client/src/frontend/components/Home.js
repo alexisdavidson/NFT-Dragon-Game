@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Row, Col, Card, Button } from 'react-bootstrap'
+import { Row, Col, Card, Button, Form } from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
 import moment from 'moment'
@@ -126,8 +126,19 @@ const Home = ({ account }) => {
     return (
         <div className="flex justify-center">
             <div className="px-5 container">
+                <Row>
+                    <Col lg={4} className="g-4">
+                        <Form className="pt-2 d-flex">
+                            <Form.Group className="mb-3 pr-1" controlId="formPlayerName">
+                                <Form.Control type="text" placeholder="Enter player name" style={{width: "90%"}}/>
+                            </Form.Group>
+                            <Button variant="success" type="submit" style={{height: "50%"}}>Submit</Button>
+                        </Form>
+                    </Col>
+                </Row>
+
                 {items.length > 0 ?
-                    <Row xs={1} md={2} lg={4} className="g-4 py-5">
+                    <Row xs={1} md={2} lg={4} className="g-4 pb-5 pt-3">
                         {items.map((item, idx) => (
                             <Col key={idx} className="overflow-hidden">
                                 <Card bg="dark">
