@@ -84,14 +84,18 @@ app.get('/api/get_opponent', (req, res) => {
 app.post('/api/join_matchmaking_pool', (req, res) => {
     const walletAddress = req.body.walletAddress
     const dragonId = req.body.dragonId
+    const playerName = req.body.playerName
 
-    const lettersAndNumbersPattern = /^[a-z0-9]+$/;
+    const lettersAndNumbersPattern = /^[a-zA-Z0-9]+$/;
     if(walletAddress != undefined && walletAddress != null && !walletAddress.match(lettersAndNumbersPattern))
         return res.status(400).json({ err: "Invalid input. walletAddress no special characters and no numbers, please!"})
 
     const numbersPattern = /^[0-9]+$/;
     if(dragonId != undefined && dragonId != null && !dragonId.toString().match(numbersPattern))
         return res.status(400).json({ err: "Invalid input. dragonId only numbers!"})
+
+    if(playerName != undefined && playerName != null && !playerName.toString().match(lettersAndNumbersPattern))
+        return res.status(400).json({ err: "Invalid input. playerName no special characters and no numbers, please!"})
 
     let sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address = ? AND dragon_id = ? LIMIT 1;"
     
@@ -105,8 +109,8 @@ app.post('/api/join_matchmaking_pool', (req, res) => {
                 res.send(result)
             }
             else {
-                const sqlInsert = "INSERT INTO matchmaking_pool (wallet_address, dragon_id, date_joined) VALUES (?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "');"
-                db.query(sqlInsert, [walletAddress, dragonId], (err2, result2) => {
+                const sqlInsert = "INSERT INTO matchmaking_pool (wallet_address, dragon_id, date_joined, player_name) VALUES (?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "', ?);"
+                db.query(sqlInsert, [walletAddress, dragonId, playerName], (err2, result2) => {
                     if (err2) console.log(err2)
                     if (result2) console.log(result2.insertId)
             
@@ -122,13 +126,27 @@ app.post('/api/play_match', async (req, res) => {
     const walletAddress2 = req.body.walletAddress2
     const dragonId1 = req.body.dragonId1
     const dragonId2 = req.body.dragonId2
+    const player1 = req.body.player1
+    const player2 = req.body.player2
+    let err = ""
     console.log("Call play match " + walletAddress1 + " (" + dragonId1 + ") vs " + walletAddress2 + " (" + dragonId2 + ")")
 
-    const lettersAndNumbersPattern = /^[a-z0-9]+$/;
-    if(walletAddress1 != undefined && walletAddress1 != null && !walletAddress1.match(lettersAndNumbersPattern))
-        return res.status(400).json({ err: "Invalid input. walletAddress1 no special characters and no numbers, please!"})
-    if(walletAddress2 != undefined && walletAddress2 != null && !walletAddress2.match(lettersAndNumbersPattern))
-        return res.status(400).json({ err: "Invalid input. walletAddress2 no special characters and no numbers, please!"})
+    const lettersAndNumbersPattern = /^[a-zA-Z0-9]+$/;
+    if(walletAddress1 != undefined && walletAddress1 != null && !walletAddress1.match(lettersAndNumbersPattern)) {
+        err = "Invalid input. walletAddress1 no special characters and no numbers, please!"
+        console.log(err)
+        return res.status(400).json({ err: err})
+    }
+    if(walletAddress2 != undefined && walletAddress2 != null && !walletAddress2.match(lettersAndNumbersPattern)) {
+        err = "Invalid input. walletAddress2 no special characters and no numbers, please!"
+        console.log(err)
+        return res.status(400).json({ err: err})
+    }
+    if(player1 != undefined && player1 != null && !player1.toString().match(lettersAndNumbersPattern) && player1.length != 0) {
+        err = "Invalid input. player1 no special characters and no numbers, please!"
+        console.log(err + ": " + player1)
+        return res.status(400).json({ err: err})
+    }
 
     const numbersPattern = /^[0-9]+$/;
     if(dragonId1 != undefined && dragonId1 != null && !dragonId1.toString().match(numbersPattern))
@@ -147,8 +165,8 @@ app.post('/api/play_match', async (req, res) => {
     console.log("battleLog:")
     console.log(battleLog)
 
-    const sqlInsert = "INSERT INTO match_history (wallet1, wallet2, dragon1, dragon2, battle_log, winner, date_played) VALUES (?, ?, ?, ?, ?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "');"
-    db.query(sqlInsert, [walletAddress1, walletAddress2, dragonId1, dragonId2, JSON.stringify(battleLog), winner], (err, result) => {
+    const sqlInsert = "INSERT INTO match_history (wallet1, wallet2, dragon1, dragon2, battle_log, winner, date_played, player1, player2) VALUES (?, ?, ?, ?, ?, ?, '" + moment.utc().format('YYYY-MM-DD HH:mm:ss') + "', ?, ?);"
+    db.query(sqlInsert, [walletAddress1, walletAddress2, dragonId1, dragonId2, JSON.stringify(battleLog), winner, player1, player2], (err, result) => {
         if (err) console.log(err)
         if (result) {
             const sqlDelete = "DELETE FROM matchmaking_pool WHERE (wallet_address = ? AND dragon_id = ?) OR (wallet_address = ? AND dragon_id = ?);"

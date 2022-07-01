@@ -312,7 +312,8 @@ const Match = (account) => {
                                 <h2 className="text-danger linko result-hide">Defeat</h2>
                                 }
                             </div>
-                            <div>
+                            <div style={{textAlign: "left"}}>
+                                <span style={{fontSize: "18px", fontWeight: "bold"}}>{match.player1}</span><br/>
                                 <span className="text-dark">{match.wallet1}</span>
                             </div>
                         </Col>
@@ -348,7 +349,8 @@ const Match = (account) => {
                                 <h2 className="text-danger linko result-hide">Defeat</h2>
                                 }
                             </div>
-                            <div>
+                            <div style={{textAlign: "left"}}>
+                                <span style={{fontSize: "18px", fontWeight: "bold"}}>{match.player2}</span><br/>
                                 <span className="text-dark">{match.wallet2}</span>
                             </div>
                         </Col>

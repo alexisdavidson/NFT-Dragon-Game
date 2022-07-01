@@ -55,7 +55,8 @@ const Home = ({ account }) => {
     const submitPick = (dragonId) => {
         console.log("Pick dragon " + dragonId);
 
-        let playerName = document.querySelector('.playerNameControl').value;
+        let playerNameElement = document.querySelector('.playerNameControl')
+        let playerName = playerNameElement.value.replace(/[^\w\s]/gi, '') // Remove special characters
         console.log("Save username " + playerName);
         localStorage.setItem('playerName', playerName);
         
@@ -70,7 +71,8 @@ const Home = ({ account }) => {
                 console.log("No opponent found. Joining matchmaking pool")
                 Axios.post(configData.SERVER_URL + 'api/join_matchmaking_pool', {
                     walletAddress: account,
-                    dragonId: dragonId
+                    dragonId: dragonId,
+                    playerName: playerName
                 }).then((response) => {
                     if (response.data[0] == true) {
                         console.log("Already in matchmaking pool.")
@@ -92,8 +94,10 @@ const Home = ({ account }) => {
                 Axios.post(configData.SERVER_URL + 'api/play_match', {
                     walletAddress1: account,
                     dragonId1: dragonId,
+                    player1: playerName,
                     walletAddress2: response.data[0].wallet_address,
                     dragonId2: response.data[0].dragon_id,
+                    player2: response.data[0].player_name
                 }).then((response) => {
                     console.log("Play match result: ")
                     let matchId = response.data[0]
