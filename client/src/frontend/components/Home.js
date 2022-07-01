@@ -45,8 +45,19 @@ const Home = ({ account }) => {
         routeChangeMatch(matchId)
     }
 
+    const getPlayerNameFromStorage = () => {
+        // localStorage.removeItem('playerName')
+        if (localStorage.getItem('playerName') === null) 
+            return ""
+        return localStorage.getItem('playerName')
+    }
+
     const submitPick = (dragonId) => {
         console.log("Pick dragon " + dragonId);
+
+        let playerName = document.querySelector('.playerNameControl').value;
+        console.log("Save username " + playerName);
+        localStorage.setItem('playerName', playerName);
         
         Axios.get(configData.SERVER_URL + 'api/get_opponent', {
             params: {
@@ -130,9 +141,9 @@ const Home = ({ account }) => {
                     <Col lg={4} className="g-4">
                         <Form className="pt-2 d-flex">
                             <Form.Group className="mb-3 pr-1" controlId="formPlayerName">
-                                <Form.Control type="text" placeholder="Enter player name" style={{width: "90%"}}/>
+                                <Form.Control className="playerNameControl" type="text" placeholder="Enter player name" defaultValue={getPlayerNameFromStorage()} style={{width: "90%"}}/>
                             </Form.Group>
-                            <Button variant="success" type="submit" style={{height: "50%"}}>Submit</Button>
+                            {/* <Button variant="success" type="submit" style={{height: "50%"}}>Save</Button> */}
                         </Form>
                     </Col>
                 </Row>
