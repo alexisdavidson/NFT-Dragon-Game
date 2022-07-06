@@ -1,6 +1,7 @@
 import Web3 from 'web3'
 import OpenSea from 'opensea-js'
 import dotenv from 'dotenv'
+import configContract from "./configContract.json" assert {type: "json"};
 
 dotenv.config()
 
@@ -142,12 +143,12 @@ async function fetchDragons(dragonId1, dragonId2) {
     // })
 
     dragons.push(await seaport.api.getAsset({
-        tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
+        tokenAddress: configContract.CONTRACT_ADDRESS,
         tokenId: dragonId1
     }))
 
     dragons.push(await seaport.api.getAsset({
-        tokenAddress: "0x91a96a8ed695b7c59c01f845f7bb522fe906d88d",
+        tokenAddress: configContract.CONTRACT_ADDRESS,
         tokenId: dragonId2
     }))
 
