@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react'
 import { Row, Col, Card } from 'react-bootstrap'
 import {useLocation} from 'react-router-dom';
 import dice from '../images/Dice.PNG'
+import configContract from "./configContract.json";
+
 
 const Matchmaking = () => {
     const location = useLocation();
     const [item, setItem] = useState([])
 
     const loadOpenSeaItem = async (dragon) => {
-        let item = await fetch(`https://api.opensea.io/api/v1/asset/0x91a96a8ed695b7c59c01f845f7bb522fe906d88d/${dragon}`)
+        let item = await fetch(`https://api.opensea.io/api/v1/asset/${configContract.CONTRACT_ADDRESS}/${dragon}`)
         .then((res) => res.json())
         .then((res) => { return res })
         .catch((e) => {

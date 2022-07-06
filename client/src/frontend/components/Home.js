@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Axios from 'axios'
 import moment from 'moment'
 import configData from "./configData.json";
+import configContract from "./configContract.json";
 
 const Home = ({ account }) => {
     let navigate = useNavigate(); 
@@ -112,7 +113,7 @@ const Home = ({ account }) => {
     }
 
     const loadOpenSeaItems = async () => {
-        let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=0x91a96a8ed695b7c59c01f845f7bb522fe906d88d&format=json`)
+        let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=${configContract.CONTRACT_ADDRESS}&format=json`)
         .then((res) => res.json())
         .then((res) => {
           return res.assets
