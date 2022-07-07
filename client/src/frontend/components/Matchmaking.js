@@ -10,7 +10,7 @@ const Matchmaking = () => {
     const [item, setItem] = useState([])
 
     const loadOpenSeaItem = async (dragon) => {
-        let item = await fetch(`https://api.opensea.io/api/v1/asset/${configContract.CONTRACT_ADDRESS}/${dragon}`)
+        let item = await fetch(`${configContract.OPENSEA_API}/asset/${configContract.CONTRACT_ADDRESS}/${dragon}`)
         .then((res) => res.json())
         .then((res) => { return res })
         .catch((e) => {

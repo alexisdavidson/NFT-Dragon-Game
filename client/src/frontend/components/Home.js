@@ -113,7 +113,7 @@ const Home = ({ account }) => {
     }
 
     const loadOpenSeaItems = async () => {
-        let items = await fetch(`https://api.opensea.io/api/v1/assets?owner=${account}&asset_contract_address=${configContract.CONTRACT_ADDRESS}&format=json`)
+        let items = await fetch(`${configContract.OPENSEA_API}/assets?owner=${account}&asset_contract_address=${configContract.CONTRACT_ADDRESS}&format=json`)
         .then((res) => res.json())
         .then((res) => {
           return res.assets

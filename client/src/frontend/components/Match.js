@@ -45,7 +45,7 @@ const Match = (account) => {
 
     const loadOpenSeaItems = async (match) => {
         let dragons = []
-        dragons.push(await fetch(`https://api.opensea.io/api/v1/asset/${configContract.CONTRACT_ADDRESS}/${match.dragon1}`)
+        dragons.push(await fetch(`${configContract.OPENSEA_API}/asset/${configContract.CONTRACT_ADDRESS}/${match.dragon1}`)
         .then((res) => res.json())
         .then((res) => { return res })
         .catch((e) => {
@@ -54,7 +54,7 @@ const Match = (account) => {
           return null
         }))
 
-        dragons.push(await fetch(`https://api.opensea.io/api/v1/asset/${configContract.CONTRACT_ADDRESS}/${match.dragon2}`)
+        dragons.push(await fetch(`${configContract.OPENSEA_API}/asset/${configContract.CONTRACT_ADDRESS}/${match.dragon2}`)
         .then((res) => res.json())
         .then((res) => { return res })
         .catch((e) => {
