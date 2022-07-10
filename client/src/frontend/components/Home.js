@@ -61,55 +61,29 @@ const Home = ({ account }) => {
         console.log("Save username " + playerName);
         localStorage.setItem('playerName', playerName);
         
-        Axios.get(configData.SERVER_URL + 'api/get_opponent', {
-            params: {
-                walletAddress: account,
-                dragonId: dragonId
-            },
-          }).then((response) => {
-            if (response.data.length == 0) {
-                // No suitable opponent in matchmaking pool -> join the pool 
-                console.log("No opponent found. Joining matchmaking pool")
-                Axios.post(configData.SERVER_URL + 'api/join_matchmaking_pool', {
-                    walletAddress: account,
-                    dragonId: dragonId,
-                    playerName: playerName
-                }).then((response) => {
-                    if (response.data[0] == true) {
-                        console.log("Already in matchmaking pool.")
-                        alert("This dragon is already in the matchmaking pool.")
-                    }
-                    else {
-                        console.log("Matchmaking pool joined.")
-                        routeChangeMatchmaking(dragonId)
-                    }
-                    console.log(response)
-                })
-            }
-            else {
-                // Suitable opponent found -> play match
-                console.log(response.data)
-                
-                console.log("Opponent found. Starting match against " + response.data[0].dragon_id + ", " + response.data[0].wallet_address)
-                
-                Axios.post(configData.SERVER_URL + 'api/play_match', {
-                    walletAddress1: account,
-                    dragonId1: dragonId,
-                    player1: playerName,
-                    walletAddress2: response.data[0].wallet_address,
-                    dragonId2: response.data[0].dragon_id,
-                    player2: response.data[0].player_name
-                }).then((response) => {
-                    console.log("Play match result: ")
-                    let matchId = response.data[0]
-                    console.log(matchId)
-                    
-                    routeChangeMatch(matchId)
-                })
+        Axios.post(configData.SERVER_URL + 'api/pick_nft', {
+            walletAddress1: account,
+            dragonId1: dragonId,
+            player1: playerName
+        }).then((response) => {
+            const serverResultType = response.data.serverResultType
+            const serverResultValue = response.data.serverResultValue
+            console.log("Server result type: " + serverResultType)
+            console.log("Server result value: " + serverResultValue ?? "null")
 
+            if (serverResultType == "COOLDOWN") {
+                alert("This dragon is on cooldown")
+            }
+            else if (serverResultType == "ALREADY_POOL") {
+                alert("This dragon is already in the matchmaking pool.")
+            }
+            else if (serverResultType == "JOINED_POOL") {
+                routeChangeMatchmaking(dragonId)
+            }
+            else if (serverResultType == "PLAY_MATCH") {
+                routeChangeMatch(serverResultValue)
             }
         })
-        
     }
 
     const loadOpenSeaItems = async () => {
