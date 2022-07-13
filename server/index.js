@@ -113,6 +113,7 @@ app.post('/api/pick_nft', async (req, res) => {
                         player2 = result[0].player_name
                     }
                 }
+                else console.log("No result for " + sqlSelect)
 
                 // If opponent found, play match
                 if (dragonId2 != -1) {
