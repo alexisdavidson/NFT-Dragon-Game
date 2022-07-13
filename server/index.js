@@ -106,7 +106,7 @@ app.post('/api/pick_nft', async (req, res) => {
             db.query(sqlSelect, [walletAddress1, dragonId1], async (err, result) => {
                 if (err) console.log(err)
                 if (result) {
-                    console.log("Check opponent result: " + sqlSelect)
+                    console.log("Check opponent result: " + sqlSelect + ", " + walletAddress1 + ", " + dragonId1)
                     console.log(result)
                     if (result != null && result.length > 0) {
                         walletAddress2 = result[0].wallet_address
