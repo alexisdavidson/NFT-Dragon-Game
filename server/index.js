@@ -100,7 +100,7 @@ app.post('/api/pick_nft', async (req, res) => {
             let player2 = ""
             sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address != ? AND dragon_id != ? LIMIT 1;"
             if (canFightOwnWallet === "TRUE") {
-                sqlSelect = "SELECT * FROM matchmaking_pool WHERE dragon_id != ? AND dragon_id != ? LIMIT 1;"
+                sqlSelect = "SELECT * FROM matchmaking_pool WHERE wallet_address IS NOT NULL AND dragon_id != ? LIMIT 1;"
             }
             
             db.query(sqlSelect, [walletAddress1, dragonId1], async (err, result) => {
